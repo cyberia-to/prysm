@@ -7,7 +7,7 @@
 
 use bevy::prelude::*;
 use prysm::{
-    theme, atoms::{glass_bg, GlassDepth},
+    theme, atoms::{glass, GlassDepth},
     layout::scrollback::{StreamPlugin, StreamChannel, StreamScrollback},
     tape::{Chunk, sigil, render, encode_nested, table_chunk},
 };
@@ -45,9 +45,10 @@ fn setup(mut commands: Commands) {
             Node {
                 width: Val::Percent(100.0),
                 padding: UiRect::all(Val::Px(theme::G)),
+                border: UiRect::all(Val::Px(1.0)),
                 ..default()
             },
-            glass_bg(GlassDepth::Background),
+            glass(GlassDepth::Background),
         ))
         .with_children(|bar| {
             bar.spawn((

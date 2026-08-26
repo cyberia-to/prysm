@@ -1,4 +1,4 @@
 pub mod glass;
 pub mod text;
 
-pub use glass::{GlassDepth, Glass, Saber, glass_bg, saber_h};
+pub use glass::{GlassDepth, Glass, Saber, glass, saber_h};

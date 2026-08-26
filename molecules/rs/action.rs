@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use tape::{Chunk, sigil, render, decode_nested};
 use crate::theme;
-use crate::atoms::glass::{GlassDepth, glass_bg};
+use crate::atoms::glass::{GlassDepth, glass};
 
 #[derive(Component)]
 pub struct ActionButton {
@@ -29,9 +29,10 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
             padding: UiRect::axes(Val::Px(theme::G * 2.0), Val::Px(theme::G * 0.75)),
             margin: UiRect::vertical(Val::Px(2.0)),
             align_self: AlignSelf::FlexStart,
+            border: UiRect::all(Val::Px(1.0)),
             ..default()
         },
-        glass_bg(GlassDepth::Midground),
+        glass(GlassDepth::Midground),
         ChildOf(parent),
     ))
     .with_children(|b| {
