@@ -34,3 +34,25 @@ pub fn spawn_scope(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> En
     }
     container
 }
+
+/// A `(key, value)` pair on one line — the row of a struct tree.
+///
+/// The children are laid across, not stacked: a record's field and its value
+/// belong on the same line, and stacking them doubles the height of every
+/// structured result.
+pub fn spawn_pair(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
+    let container = commands.spawn((
+        Node {
+            flex_direction: FlexDirection::Row,
+            width: Val::Percent(100.0),
+            column_gap: Val::Px(theme::G),
+            ..default()
+        },
+        ChildOf(parent),
+    )).id();
+
+    for child in decode_nested(&chunk.payload) {
+        crate::layout::scrollback::dispatch(commands, container, &child);
+    }
+    container
+}
