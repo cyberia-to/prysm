@@ -22,6 +22,11 @@ pub const BODY:    f32 = 16.0;
 pub const CAPTION: f32 = 14.0;
 pub const MICRO:   f32 = 12.0;
 
+/// The widest a column of text grows before the eye stops tracking line to
+/// line. It is a ceiling, not a width: a viewport narrower than this gets the
+/// whole of itself, because a phone has no width to give away to margins.
+pub const MEASURE: f32 = 760.0;
+
 /// The one background. Every surface in every view sits on pure black — depth
 /// comes from [`BORDER`] and the glass alphas, never from a lighter fill.
 pub const DARK_BASE:     Color = Color::srgba(0.0, 0.0, 0.0, 1.0);
