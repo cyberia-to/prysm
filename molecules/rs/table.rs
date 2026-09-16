@@ -27,6 +27,12 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
         }
     }
 
+    let cols = headers
+        .len()
+        .max(data_rows.iter().map(|(c, _)| c.len()).max().unwrap_or(0))
+        .max(1);
+    let tracks = column_tracks(cols);
+
     let (fill, hair) = glass(GlassDepth::Midground);
     let root = commands
         .spawn((
@@ -44,45 +50,23 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
         .id();
 
     if !headers.is_empty() {
-        let header_row = commands
-            .spawn((
-                Node {
-                    flex_direction: FlexDirection::Row,
-                    width: Val::Percent(100.0),
-                    padding: UiRect::axes(Val::Px(theme::G * 1.5), Val::Px(theme::G)),
-                    border: UiRect::bottom(Val::Px(1.0)),
-                    column_gap: Val::Px(theme::G),
-                    ..default()
-                },
-                BorderColor::all(theme::BORDER),
-                ChildOf(root),
-            ))
-            .id();
-        for (i, h) in headers.iter().enumerate() {
-            spawn_cell(commands, header_row, h, true, i, headers.len());
+        let header_row = spawn_lane(commands, root, true, 0);
+        for i in 0..cols {
+            spawn_cell(
+                commands,
+                header_row,
+                headers.get(i).map(String::as_str).unwrap_or(""),
+                true,
+                i,
+                tracks[i],
+            );
         }
     }
 
     for (i, (cells, target)) in data_rows.iter().enumerate() {
-        let mut row = commands.spawn((
-            Node {
-                flex_direction: FlexDirection::Row,
-                width: Val::Percent(100.0),
-                padding: UiRect::axes(Val::Px(theme::G * 1.5), Val::Px(theme::G)),
-                column_gap: Val::Px(theme::G),
-                border: UiRect::bottom(Val::Px(1.0)),
-                ..default()
-            },
-            BorderColor::all(Color::srgba(
-                0.13,
-                0.92,
-                0.51,
-                if i % 2 == 0 { 0.06 } else { 0.12 },
-            )),
-            ChildOf(root),
-        ));
+        let data_row = spawn_lane(commands, root, false, i);
         if let Some(t) = target {
-            row.insert((
+            commands.entity(data_row).insert((
                 Button,
                 ActionButton {
                     label: cells.first().cloned().unwrap_or_default(),
@@ -90,14 +74,58 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
                 },
             ));
         }
-        let data_row = row.id();
-        let n = cells.len().max(headers.len());
-        for (j, cell) in cells.iter().enumerate() {
-            spawn_cell(commands, data_row, cell, false, j, n);
+        for j in 0..cols {
+            spawn_cell(
+                commands,
+                data_row,
+                cells.get(j).map(String::as_str).unwrap_or(""),
+                false,
+                j,
+                tracks[j],
+            );
         }
     }
 
     root
+}
+
+/// One width per column, same on every lane. First column takes the leftover;
+/// the rest are equal tracks. Percents sum to 100.
+fn column_tracks(n: usize) -> Vec<f32> {
+    match n {
+        0 | 1 => vec![100.0],
+        2 => vec![62.0, 38.0],
+        3 => vec![50.0, 25.0, 25.0],
+        4 => vec![44.0, 16.0, 16.0, 24.0],
+        n => {
+            let rest = 56.0 / (n as f32 - 1.0);
+            let mut t = vec![44.0];
+            t.extend(std::iter::repeat(rest).take(n - 1));
+            t
+        }
+    }
+}
+
+fn spawn_lane(commands: &mut Commands, parent: Entity, header: bool, i: usize) -> Entity {
+    commands
+        .spawn((
+            Node {
+                flex_direction: FlexDirection::Row,
+                width: Val::Percent(100.0),
+                min_width: Val::Percent(100.0),
+                padding: UiRect::axes(Val::Px(theme::G * 1.5), Val::Px(theme::G)),
+                border: UiRect::bottom(Val::Px(1.0)),
+                overflow: Overflow::clip(),
+                ..default()
+            },
+            BorderColor::all(if header {
+                theme::BORDER
+            } else {
+                Color::srgba(0.13, 0.92, 0.51, if i % 2 == 0 { 0.06 } else { 0.14 })
+            }),
+            ChildOf(parent),
+        ))
+        .id()
 }
 
 fn split_target(mut cells: Vec<String>) -> (Vec<String>, Option<String>) {
@@ -118,10 +146,9 @@ fn spawn_cell(
     text: &str,
     is_header: bool,
     col: usize,
-    cols: usize,
+    width_pct: f32,
 ) {
     let numeric = col > 0;
-    let grow = if col == 0 && cols > 1 { 2.2 } else { 1.0 };
     let (size, color) = if is_header {
         (theme::MICRO, theme::TEXT_DIM)
     } else if col == 0 {
@@ -133,8 +160,11 @@ fn spawn_cell(
         .spawn((
             Node {
                 flex_direction: FlexDirection::Row,
-                flex_grow: grow,
-                flex_basis: Val::Px(0.0),
+                width: Val::Percent(width_pct),
+                min_width: Val::Px(0.0),
+                max_width: Val::Percent(width_pct),
+                flex_grow: 0.0,
+                flex_shrink: 0.0,
                 overflow: Overflow::clip(),
                 justify_content: if numeric {
                     JustifyContent::FlexEnd
@@ -142,6 +172,7 @@ fn spawn_cell(
                     JustifyContent::FlexStart
                 },
                 align_items: AlignItems::Center,
+                padding: UiRect::horizontal(Val::Px(theme::G * 0.5)),
                 ..default()
             },
             ChildOf(row),
