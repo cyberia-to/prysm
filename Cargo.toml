@@ -6,8 +6,8 @@ description = "cyb's visual composition layer — atoms, molecules, palette. Sel
 license = "Cyber"
 
 [dependencies]
-cyb-core = { path = "../cyb/core" }
-tape       = { path = "../tape/impl/rust" }
+neuron-model = { path = "../neuron/model", default-features = false }
+tade       = { path = "../tade/impl/rust" }
 bevy = "0.18.0"
 crossbeam-channel = "0.5"
 

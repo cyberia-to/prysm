@@ -1,0 +1,13 @@
+[package]
+name = "prysm-cli"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "prysm"
+path = "src/main.rs"
+
+[dependencies]
+# only the frame format — the CLI shows prysm's routing without the Bevy renderer
+tade = { path = "../../tade/impl/rust" }

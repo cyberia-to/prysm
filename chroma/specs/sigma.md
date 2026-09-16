@@ -1,30 +1,35 @@
 ---
 tags: prysm, cyb, chroma
-alias: resource, wallet
+alias: sigma assets, sigma neurons
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 resource chrome — mid-right
 
-**resource**: the economic interface between a [[neuron]] and the [[cybergraph]]. wallet, token balances, portfolio value. Σ widget on the right edge; full wallet cell in spacetime
+Sigma projects the robot's assets and manages its attached neurons, as defined by [anatomy](../../../cyb/anatomy.md). The Σ widget opens the assets/identities view. Avatar is the robot's visualization; Vault holds secrets and performs scoped signing.
 
 ## core function
 
-sigma shows economic state. the Σ chrome slot shows total portfolio value and reflects balance changes through [[emotion]] color. any chroma can request identity via `(ava, sigma, identity, …)` to get the current neuron's resource state.
+sigma aggregates qualified balances across permitted attachments without merging subjects or foreign denominations. Every balance retains subject, network, asset identifier, source evidence, freshness and valuation basis. Observation, control and delegation are displayed separately; a total is not spendable authority. Identity selection is explicit in Sigma and cannot change an already captured action.
 
-## cyberlinks
+## Proposed host events
+
+These are adapter intents/projections, not automatic cyberlinks. The [composition contract](../../system/specs/composition.md#navigation-and-authority) governs dispatch.
 
 | receives from | token | meaning |
 |---------------|-------|---------|
-| ava | identity | neuron changed — reload balances |
-| com | send | initiate token transfer |
+| host attachments | selection | explicitly selected subject/network changed — reload scoped projection |
+| com | send | request transfer with captured subject, binding revision, network, asset and payload |
 
 | sends to | token | meaning |
 |----------|-------|---------|
-| ava | resource | current balance summary for avatar display |
-| spacetime | switch-renderer | open sigma wallet in space zone |
-| time | record | log transfers |
+| avatar view | resource | optional balance summary for display, without key access |
+| spacetime | switch-renderer | open sigma assets/neurons in space zone |
+| log/time | record | display persisted transfer attempts and outcomes from Cybergraph/BBG |
 
 ## widget layout (chrome slot)
 
@@ -36,7 +41,7 @@ glass [fix × fill(mid-right edge), depth overlay]
     pill [emotion — green rising, red falling]
 ```
 
-## spacetime cell (full wallet)
+## Space view (assets and neurons)
 
 opened when Σ widget tapped — renders in space zone:
 
@@ -48,11 +53,11 @@ glass [fill × fill, depth background, overflow scroll]
       vector [6g, Σ sigma icon]
       text [h2, "Sigma"]
       counter [h2, total portfolio value, right-aligned]
-    --- address row ---
+    --- qualified attachment row ---
     glass [fill × fix(6g), depth midground]
       stack horizontal [gap g]
         glass [fix(4g) × fix(4g), corner-radius 2g, green tint] — avatar circle
-        address [big, with hash bars]
+        address [big, with identity domain, network, access mode and hash bars]
         counter [body, total value, right-aligned]
     --- token list ---
     stack vertical [gap 0]
@@ -74,10 +79,11 @@ glass [fill × fill, depth background, overflow scroll]
 each row: icon | ticker | balance | price | value. pill = share of total portfolio. expandable (>) for sub-tokens or LP details.
 
 inputs: [[CYB]], [[HYDROGEN]], [[BOOT]], [[VOLT]], [[AMPERE]], IBC tokens, staking state, portfolio value
-outputs: send → token transfer | stake → delegation | navigate → token detail or [[cyberver]]
+outputs: send/stake → authorized host action intent | navigate → token detail or the [Cyberver proposal](../../../aos/cyberver.md). Foreign staking/IBC fields follow their adapter profile; protocol resources are distinct from Body's hardware telemetry.
 
-## pages (full app)
+## Pages (proposed view)
 
+- neurons: inspect, attach in observation/control/delegated mode, explicitly create, or detach; retain domain, network and device/key references
 - [[coins]]: fungible token balances and transfers
 - [[cards]]: unique tokens and collectibles
 - [[scores]]: reputation and contribution metrics
@@ -94,7 +100,7 @@ $\mathcal{F}$:
 
 | element | emotion | trigger |
 |---------|---------|---------|
-| total portfolio counter | green | — |
+| total portfolio counter | neutral unless a qualified change is known | show missing/stale valuation explicitly |
 | token value | green if increased, red if decreased | balance change |
 | pill progress | green | proportion |
 | Σ widget glow | green increase, red decrease | balance change |
@@ -107,19 +113,19 @@ $\mathcal{F}$:
 | sending | amount input + recipient in commander | tap send |
 | receiving | QR code / address display | tap receive |
 | loading | skeleton rows | fetching balances |
-| locked | "prove address" in commander | wallet not connected |
+| observation only | balances visible, send unavailable | no controlled attachment/current grant |
 
 ## ECS
 
-- Entity: sigma-cell organelle
+- Entity: sigma view
 - Components:
   - `Sizing { width: Fill, height: Fill }`
   - `FoldSet { conformations }`
   - `TokenBalances { list of (icon, ticker, balance, price, value, proportion) }`
   - `TotalPortfolio { value }`
-  - `NeuronAddress { bech32 }`
-  - `WalletState { locked | unlocked }`
+  - `SubjectDisplay { subject_ref, network, display_profile, access_mode }`
+  - `AttachmentDisplay { binding_revision, vault_ref, grant_status }` — references only, never key bytes
 - Systems:
-  - `SigmaFetchSystem` reads token balances from chain
-  - `SigmaSendSystem` handles send flow
+  - `SigmaFetchSystem` reads qualified balance projections through State/host adapters
+  - `SigmaSendSystem` emits exact transfer intent to the host's Ward/Vault path
   - `SigmaPortfolioSystem` computes proportions and total

@@ -1,59 +1,87 @@
 ---
 tags: prysm, cyb, chroma
-alias: when, history, unix time, machine time, mt
+alias: time view
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
 
-history chrome — bottom-right
+Time view and history chrome.
 
-**when**: time. discrete [[steps]] that order [[learning]] in the [[cybergraph]]. every [[cyberlink]] carries the [[when]] of its [[finality]] — [[knowledge]] searchable through the ticking of [[consensus]]
+Proposed UI contract under [composition](../../system/specs/composition.md).
+Layouts and ECS records below specify intended behavior, not shipped coverage.
 
-memory of actions. planning for the future. the neuron's timeline of what happened and when.
+## Ownership
 
-## core function
+[Time](../../../cyb/parts/time.md) composes Log ← Now → Plan: retained history,
+present context and standing/deferred intent in one screen. Cybergraph/BBG stores
+authoritative history. Log renders that history; neither this widget nor a
+session-local event list is another ledger.
 
-time is the ledger of the session. every other chroma posts `(*, time, record, …)` when significant events happen. time accumulates them and makes them navigable. it is the passive recorder — it does not initiate.
+The robot can inspect history across several attached neurons. Every event keeps
+its author, identity domain, network, source, effect status and disclosure scope.
+Changing a filter does not merge subjects or change the author of pending work.
+Plan updates go through the host's captured authority and current Ward policy.
 
-the full time cell in spacetime is a sortable transaction history: blocks confirmed, cyberlinks created, tokens sent, world transitions.
+## Host projections
 
-## cyberlinks
+| source | projection | meaning |
+|--------|------------|---------|
+| Log | retained events | render authored actions, attempts and outcomes |
+| Now | context | current inspected particle/view and navigation state |
+| Plan | scheduled intent | display standing orders and deferred work |
+| State | network evidence | distinguish reported state, verified anchors and finality |
 
-| receives from | token | meaning |
-|---------------|-------|---------|
-| any | record | append event to history log |
-| spacetime | locate | log world transition with timestamp |
-| sigma | record | log token transfer |
+Navigation events may be local presentation state. Persisting one requires an
+explicit record profile; a renderer switch is not automatically a signed cyberlink.
+A UI timestamp does not establish consensus order or finality.
 
-| sends to | token | meaning |
-|----------|-------|---------|
-| spacetime | switch-renderer | open time history in space zone |
+## Widget layout
 
-## widget layout (chrome slot)
-
-```
+```text
 glass [fix × fix(bottom-right), depth overlay]
   stack vertical [align center]
     vector [clock icon]
-    text [micro, last event timestamp]
-    counter [micro, unread events, green]
+    text [micro, last known event timestamp]
+    counter [micro, unread events]
 ```
 
-## spacetime cell (full history)
+Tapping the widget navigates to `cyb://view/time`. It does not start a prog,
+attach a neuron or sign an operation.
 
+## Full view
+
+```text
+glass [fill × fill, depth background]
+  tabs [Log | Now | Plan]
+  table [sortable, history projection]
+    columns: subject/network | status | type | observed time | order/evidence | action
+  context [current inspected particle]
+  schedule [standing and deferred intent, retained outcome]
 ```
-glass [fill × fill, depth background, overflow scroll]
-  table [sortable]
-    columns: status ▲ (✓/✗) | type ▲ (icon + label) | timestamp ▲ | tx (hash, green, link) | action
-    rows: full event feed, newest first
-```
 
-same structure as [[robot]] Time sub-page but global (all sessions, all worlds) vs. per-neuron.
+Filters include attachment, network, prog/task and session; absent or undisclosed
+history stays explicit. Failure, cancellation and unknown outcomes are visible.
+A restored screen reads retained graph records rather than reconstructing history
+from previously displayed rows.
 
-## time in cyb
+## Time domains
 
-- machine time: unix timestamp carried by every on-chain [[cyberlink]]
-- block height: discrete step counter of [[consensus]]
-- relative time: "24 days ago", "31 days ago" — rendered by time chrome
+| field | meaning |
+|-------|---------|
+| observed timestamp | source-reported or local wall-clock time, possibly absent |
+| runtime commit index | local durable transaction order |
+| SignalChain step | order within one neuron's signal chain |
+| block height / finality evidence | declared network's ordering and confirmation profile |
 
-see [[time/history]] for full history spec.
+These fields are not interchangeable. Relative time (“37 sec ago”) is a display
+over a known timestamp; it must not invent a Unix timestamp for every cyberlink.
+Machine-time formatting can use UTC days since the Unix epoch without claiming
+that wall-clock order is consensus order.
+
+## Proposed ECS adapter
+
+`TimeProjection` contains typed routes, scoped history rows, Now context and Plan
+records. `TimeViewSystem` renders it; local sorting changes presentation only.
+Editing a plan emits an exact host intent, and its result retains the captured
+subject and network even after navigation changes.

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use bevy::prelude::*;
 use crossbeam_channel::{Receiver, Sender, unbounded};
-use tape::{Chunk, ChunkId, sigil, render, read_kv};
+use tade::{Chunk, ChunkId, sigil, render, read_kv};
 
 // ── StreamChannel ─────────────────────────────────────────────────────────────
 
@@ -42,9 +42,18 @@ pub fn dispatch(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entit
         (sigil::DOT, render::STATUS)    => crate::molecules::status::spawn(commands, parent, chunk),
         (sigil::DOT, render::PROGRESS)  => crate::molecules::progress::spawn(commands, parent, chunk),
         (sigil::ZAP, render::COMPONENT) => crate::molecules::action::spawn(commands, parent, chunk),
+        (sigil::BUC, render::COMPONENT) => crate::atoms::stat::spawn(commands, parent, chunk),
+        (sigil::LUS, render::COMPONENT) => crate::molecules::component::spawn_row(commands, parent, chunk),
         (sigil::BAR, render::COMPONENT) => crate::molecules::component::spawn(commands, parent, chunk),
         (sigil::FAS, render::COMPONENT) => crate::molecules::component::spawn_scope(commands, parent, chunk),
         (sigil::HAX, render::TABLE)     => crate::molecules::table::spawn(commands, parent, chunk),
+        // Structured results: a tree of pairs. Without these two arms every
+        // record, list and nested value fell through to the debug label
+        // below, which prints one grey line holding the first 60 bytes — so
+        // a 60-row result rendered as a single truncated line and there was
+        // nothing left to scroll.
+        (sigil::FAS, render::STRUCT)    => crate::molecules::component::spawn_scope(commands, parent, chunk),
+        (sigil::COL, render::STRUCT)    => crate::molecules::component::spawn_pair(commands, parent, chunk),
         _ => {
             let label = format!(
                 "[?{} {}] {}",

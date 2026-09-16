@@ -2,11 +2,14 @@
 tags: prysm, cyb, core
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 the emotion function in [[prysm]]
 
-emotion is a computed color signal that encodes protocol state as affect. grounded in the [[color-emotion spectrum]]: seven wavelengths, seven feelings, one function. every [[prysm]] component accepts emotion as input. no component assigns emotion manually — it is always derived from data
+emotion is a computed color signal that encodes protocol state as affect. grounded in the [[color-emotion spectrum]]: seven wavelengths, seven feelings, one function. Components accept emotion as input under declared data/presentation rules. A green accent is not an authentication, validity or permission proof.
 
 ## the palette
 
@@ -46,7 +49,7 @@ value compared to reference with three zones
 
 $$\varepsilon_{threshold}(v, \theta_{low}, \theta_{high}) = \begin{cases} \text{green} & v \geq \theta_{high} \\ \text{yellow} & \theta_{low} \leq v < \theta_{high} \\ \text{red} & v < \theta_{low} \end{cases}$$
 
-used by: [[prysm/avatar]] border ([[karma]] thresholds), [[prysm/sphere-cell]] validator pills (metric vs network average), [[prysm/hfr-cell]] E-Ratio, tx status (complete/pending/failed maps to green/yellow/red)
+used by: subject-card borders (sourced [[karma]] thresholds), the [Sphere view proposal](../../../aos/sphere.md) validator pills, the [Reactor view proposal](../../../aos/reactor.md) E-Ratio, and labeled transaction outcomes
 
 generalizes to more zones:
 
@@ -71,7 +74,7 @@ $M$ — a finite map from action categories to colors:
 | explore | blue | search, discover, ask |
 | guide | green/red/yellow/blue | adviser messages — by message type |
 
-used by: [[prysm/button]], [[prysm/adviser]], [[prysm/mind]]
+used by: [[prysm/button]], [[prysm/adviser]], [Com](../../chroma/specs/com.md)
 
 ### continuous
 
@@ -99,17 +102,17 @@ a single component can carry emotion on multiple properties simultaneously: a [[
 
 emotion flows through the element tree $\mathcal{T}$:
 
-1. a cell computes emotion from protocol data (chain state, [[cyberank]], [[karma]])
-2. the cell passes emotion to its molecules as a parameter
+1. a view computes emotion from sourced protocol data (chain state, [[cyberank]], [[karma]])
+2. the view passes emotion to its molecules as a parameter
 3. molecules pass emotion to their atoms
 
-an atom never computes emotion. it receives and renders. a molecule may compute emotion for its sub-atoms (e.g. [[prysm/counter]] computes polarity from value delta). a cell computes emotion from the [[cybergraph]]
+an atom never computes emotion. it receives and renders. a molecule may compute emotion for its sub-atoms (e.g. [[prysm/counter]] computes polarity from value delta). a view computes emotion from supplied graph projections
 
 ## concrete thresholds
 
 threshold values for every component that uses $\varepsilon_{threshold}$:
 
-### karma (avatar border, neuron-card)
+### karma (qualified subject / neuron-card)
 
 | zone | condition | color |
 |------|-----------|-------|
@@ -117,9 +120,9 @@ threshold values for every component that uses $\varepsilon_{threshold}$:
 | medium | $\mu - \sigma \leq$ karma $< \mu + \sigma$ | white (#ffffff) |
 | low | karma $< \mu - \sigma$ | red (#ff0000) |
 
-$\mu$ — network mean karma, $\sigma$ — network standard deviation. thresholds are relative to network distribution, not absolute
+$\mu$ — network mean karma, $\sigma$ — network standard deviation. Thresholds are relative to a declared network distribution, not absolute. Avatar visualizes the robot and has no implicit neuron identity: a robot-level accent must disclose any aggregation of attached subjects. Missing or stale evidence cannot become a control/verification badge.
 
-### validator pills (sphere-cell)
+### validator pills (Sphere view)
 
 each metric (APR, power, commission, self-stake) evaluated independently:
 
@@ -129,7 +132,7 @@ each metric (APR, power, commission, self-stake) evaluated independently:
 | around average | $\mu_{network} \cdot 0.8 \leq v < \mu_{network}$ | yellow (#fcf000) |
 | below average | $v < \mu_{network} \cdot 0.8$ | red (#ff0000) |
 
-### E-Ratio (hfr-cell)
+### E-Ratio (Reactor view)
 
 | zone | condition | color |
 |------|-----------|-------|
@@ -147,11 +150,11 @@ $e = \text{available energy} / \text{max energy}$, range $[0, 1]$
 | pending | yellow (#fcf000) |
 | failed | red (#ff0000) |
 
-categorical, not threshold — included here because it follows the green/yellow/red pattern
+Categorical, not threshold. “Complete” requires the declared operation profile's outcome evidence; local commit, transport delivery, remote acceptance and network finality have separate labels. Color does not prove successful execution or grant authority.
 
-### cyberank (content, pill, oracle-cell particle rank)
+### cyberank (content, pill, search-view particle rank)
 
-uses $\varepsilon_{continuous}$: $v = \log_{10}(\text{rank})$, $v_{min} = 0$, $v_{max} = \log_{10}(\text{max\_rank})$. higher rank → greener. the logarithmic scale prevents a few high-rank particles from compressing the entire spectrum
+uses $\varepsilon_{continuous}$: $v = \log_{10}(\text{rank})$, $v_{min} = 0$, $v_{max} = \log_{10}(\text{max\_rank})$. The declared continuous rule maps low to red, midpoint to green and high to violet. The logarithmic scale prevents a few high-rank particles from compressing the entire spectrum. Nonpositive/absent rank or a degenerate scale uses the unavailable-data fallback; rank is not a truth score.
 
 ## default
 
@@ -165,7 +168,7 @@ when `EmotionSource` data is unavailable (chain offline, RPC timeout, fetching):
 |-----------|---------|-----------|
 | data fetching (loading) | neutral (white) | no information — no signal |
 | chain unreachable | neutral (white) | no data to evaluate — show absence of signal, not false signal |
-| stale data (> 60s old) | last computed emotion, opacity 50% | fade indicates staleness — the neuron sees that information is aging |
+| stale data (> 60s old) | last computed emotion, opacity 50% | fade indicates staleness — the viewer sees that information is aging |
 | error in computation | neutral (white) + adviser red message | emotion system fails gracefully — never show wrong color |
 
 the rule: emotion must never lie. if the system cannot compute a truthful signal, it shows no signal (neutral). showing a false green on stale data is worse than showing white
@@ -177,13 +180,13 @@ ECS: `EmotionSource` includes `freshness: Instant`. `EmotionSystem` checks fresh
 - Component: `Emotion { color: EmotionColor }` — the computed color, attached to any entity
 - Component: `EmotionSource { domain: Domain, value: f64, thresholds: Vec<f64> }` — the input data
 - System: `EmotionSystem` — reads `EmotionSource`, writes `Emotion` using the evaluation rules above
-- System: `EmotionPropagateSystem` — propagates `Emotion` from cells → molecules → atoms through the element tree
+- System: `EmotionPropagateSystem` — propagates `Emotion` from views → molecules → atoms through the element tree
 
 `EmotionSystem` runs before render systems, after data-fetch systems. emotion is recomputed every frame when the source value changes
 
 ## the binding
 
-the color-emotion mapping is innate — ancestral environments selected for wavelength-affect bindings. green = vegetation = life. red = blood = danger. this is the perceptual interface between a [[neuron]] and the [[cybergraph]]. see [[color-emotion spectrum]] for the evolutionary framework
+The color-emotion mapping is a proposed design convention inspired by evolutionary metaphors, not proof of a universal innate response. It is a presentation channel between the viewer and supplied graph data. See [[color-emotion spectrum]] for the evolutionary framework.
 
 ---
 

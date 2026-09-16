@@ -1,49 +1,55 @@
 # prysm
 
-**the visual protocol for [[superintelligence]].** every other UI library renders pixels. prysm renders **meaning**
+The visual protocol for [[cyb]]: compose typed data into atoms, molecules and views.
 
-> **speed.energy.sex** — three principles. one move: subtract.
+This repository contains renderer code and a broader proposed design. The design
+pages specify target behavior; their ECS sketches, chrome arrangements and proof
+obligations do not establish that every feature is implemented. Implementation
+and validation evidence belongs in `audit/`.
 
----
+## The model
 
-drop a molecule into a cell. the protocol places it. resize the window — it folds. the colors come from your data, not a stylesheet. the proofs show themselves. you compose; the system arranges. it is like writing CSS if CSS had been derived from first principles instead of accumulated for thirty years
+Atoms are rendering primitives. Molecules compose them into widgets. Views compose
+molecules into navigable experiences. These are UI categories, independent of the
+protocol's subject hierarchy. A view has no signing key or CellId. A neuron may
+execute several progs and appear in several views; opening a view creates neither
+a neuron nor a running program.
 
-## the model
+The proposed layout uses a spatial quantum `g = 8` logical units, sizing with
+`fix`, `fill`, or `scale`, and `stack`, `grid`, or `layer` containers. Atoms and
+molecules expose constraints and fold conformations to the layout engine.
+Renderer mappings determine pixels, world units or terminal cells.
 
-prysm is biology, compressed. **atoms** are irreducible primitives — area, line, point, content, identity, input. **molecules** are shaped widgets composed of atoms. **cells** are full applications composed of molecules. three levels, closed
+## Chroma
 
-every distance is a multiple of the quantum **g = 8pt** (one logical pixel — what browsers, iOS, and Android already use; retina is the GPU's problem). size with `fix(N·g)`, `fill`, or `scale(r)`. arrange in `stack`, `grid`, or `layer`. snap to named **sections**: `col` (25g) · `wide` (50g) · `band` (75g) · `canvas` (fill) horizontally; `line` (2g) · `bar` (6g) · `row` (12g) vertically. seven names, no arithmetic
+[Cyb's anatomy](../cyb/anatomy.md) defines the robot's 21 organs. Chroma arranges
+their UI projections: Now supplies context, Avatar visualizes the robot, Com
+accepts intent, Sense presents messages, and Sigma presents assets and attached
+neurons. Time composes Log ← Now → Plan. Stars, launcher, adviser and the minimap
+are widgets, not additional organs. Soul configures behavior, Soma supplies
+cognition, and Body supplies physical resources.
 
-## chroma — the robot, ready-made
+Prysm receives typed projections and emits intent. The host captures the acting
+neuron, attachment revision, network and payload; Ward checks authority and Vault
+performs permitted key operations. No component reads secret keys from its props
+or infers authority from an avatar, selected tab or destination.
 
-[[cyb]] is a robot. its body is given. **context** tells the neuron where they are. **avatar** tells them who they are. **commander** takes their input. **time-widget** shows what just happened. **stars** holds their favorites. **adviser** delivers messages. **S** is focus. **Σ** is energy. these are not widgets you compose — they are the robot's organs, pre-wired, sharing emotion, folding together, navigating, reading the chain
+## Example: graph search view
 
-build a cell. inhabit the **space** zone. you write what is unique. the rest is already there. this is the biggest shortcut prysm offers — you are not building an interface, you are extending a robot that already has its body
+Illustrative composition notation, not an executable Rune declaration:
 
-## example · oracle search
-
-```
-cell oracle [grid]:
+```text
+view search [grid]:
   inhabits the space zone of chroma
   stack vertical [gap g]:
     input [search, placeholder "ask"]       canvas × bar
     table [results]                         canvas × canvas
-      neuron-card                           col per row, folds to avatar on narrow
-      pill [cyberank %]                     col per row, color = rank threshold
+      neuron-card                           col per row, folds on narrow
+      pill [rank, source evidence]           col per row
 ```
 
-you write *what*. the protocol decides *where*. resize → fold adapts. chroma stays. only space reflows
-
-## what makes it different
-
-- **layout is a pure function** — same input, same output, always. **O(n)** layout, **O(1)** fold. provable interface
-- **color is computed from your data** — green when a value rises, red when it falls. you never assign a hex
-- **proof is part of the picture** — every value is `proven`, `asserted`, or `local`. the interface tells you which
-- **black is the default** — `#000000` is zero OLED power, zero visual weight, zero signal. one answer, three reasons
-- **renderer-blind** — the same tree paints to wgpu, ANSI, HTML, terminal cells
-- **chrome is given** — you do not design the robot. you fill its space zone
-- **three modes, one algebra** — stream, screen, world. all from the same axiom
-
-read deeper: [[prysm/principles]] · [[prysm/composition]] · [[prysm/layout]] · [[prysm/emotion]] · [[prysm/interaction]] · [[prysm/proof]] · [[chroma]]
-
-*don't trust. don't fear. don't beg.*
+Navigation uses [typed destinations](../neuron/specs/navigation.md), such as
+`cyb://view/brain`; inspection and authored actions have separate contracts.
+The [composition specification](system/specs/composition.md) defines the shared
+boundary for all design pages. See also [[prysm/layout]], [[prysm/emotion]],
+[[prysm/interaction]] and [[prysm/proof]].

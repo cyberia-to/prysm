@@ -2,7 +2,10 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 formal notation atom in [[prysm]]
 
@@ -57,7 +60,7 @@ colors are fixed — not driven by [[emotion]]. they are the semantic color lang
 
 ## execution
 
-code exposes an execution surface to the molecule/cell layer. the atom itself does not execute — it renders. the molecule composes code with a run button and output display. whether execution is available depends on the cell context (hacklab has a runtime; brain does not)
+The code atom renders source and supplied execution state. A view may compose it with a run button that emits intent to the host. Execution belongs to a prog under a captured neuron attachment, network, current grant and resource budget; a Hacklab view or selected source file is not itself a runtime or signer. Rendering, previewing or navigating to code must not execute it.
 
 ## states
 
@@ -76,7 +79,7 @@ state transitions: $150\text{ms}$ ease
 in the 3D extension (§11 of [[prysm/layout]]):
 
 - code renders on a plane at the same $p_z$ as its membrane
-- code always faces the neuron (billboard)
+- code always faces the viewer (billboard)
 - math typeset output renders as vector paths on the plane
 
 ## ECS
