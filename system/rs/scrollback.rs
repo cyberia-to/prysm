@@ -42,6 +42,8 @@ pub fn dispatch(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entit
         (sigil::DOT, render::STATUS)    => crate::molecules::status::spawn(commands, parent, chunk),
         (sigil::DOT, render::PROGRESS)  => crate::molecules::progress::spawn(commands, parent, chunk),
         (sigil::ZAP, render::COMPONENT) => crate::molecules::action::spawn(commands, parent, chunk),
+        (sigil::BUC, render::COMPONENT) => crate::atoms::stat::spawn(commands, parent, chunk),
+        (sigil::LUS, render::COMPONENT) => crate::molecules::component::spawn_row(commands, parent, chunk),
         (sigil::BAR, render::COMPONENT) => crate::molecules::component::spawn(commands, parent, chunk),
         (sigil::FAS, render::COMPONENT) => crate::molecules::component::spawn_scope(commands, parent, chunk),
         (sigil::HAX, render::TABLE)     => crate::molecules::table::spawn(commands, parent, chunk),
