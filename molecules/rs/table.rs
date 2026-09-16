@@ -166,6 +166,20 @@ fn spawn_cell(
     } else {
         (theme::CAPTION, theme::TEXT_DIM)
     };
+    let fade_w = theme::G * 3.0;
+    let ink = Color::srgba(0.0, 0.0, 0.0, 0.0);
+    let veil = theme::DARK_BASE;
+    let fade = if numeric {
+        LinearGradient::to_right(vec![
+            ColorStop::percent(veil, 0.0),
+            ColorStop::percent(ink, 100.0),
+        ])
+    } else {
+        LinearGradient::to_right(vec![
+            ColorStop::percent(ink, 0.0),
+            ColorStop::percent(veil, 100.0),
+        ])
+    };
     commands
         .spawn((
             Node {
@@ -195,6 +209,21 @@ fn spawn_cell(
                     ..default()
                 },
                 TextColor(color),
+                TextLayout::new_with_no_wrap(),
+            ));
+            cell.spawn((
+                Node {
+                    position_type: PositionType::Absolute,
+                    top: Val::Px(0.0),
+                    bottom: Val::Px(0.0),
+                    width: Val::Px(fade_w),
+                    left: if numeric { Val::Px(0.0) } else { Val::Auto },
+                    right: if numeric { Val::Auto } else { Val::Px(0.0) },
+                    ..default()
+                },
+                BackgroundGradient::from(fade),
+                ZIndex(1),
+                Pickable::IGNORE,
             ));
         });
 }
