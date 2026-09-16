@@ -14,8 +14,18 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
 
     for row in &rows {
         if row.sigil == sigil::FAS && row.render == render::STRUCT {
-            for h in decode_nested(&row.payload) {
-                headers.push(String::from_utf8_lossy(&h.payload).into_owned());
+            if headers.is_empty() {
+                for h in decode_nested(&row.payload) {
+                    headers.push(String::from_utf8_lossy(&h.payload).into_owned());
+                }
+            } else {
+                // A second header is a body row that leaked. Treat as data.
+                let cells: Vec<String> = decode_nested(&row.payload)
+                    .iter()
+                    .map(|c| String::from_utf8_lossy(&c.payload).into_owned())
+                    .collect();
+                let (visible, target) = split_target(cells);
+                data_rows.push((visible, target));
             }
         } else if row.sigil == sigil::COL && row.render == render::STRUCT {
             let cells: Vec<String> = decode_nested(&row.payload)
