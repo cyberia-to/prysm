@@ -1,5 +1,5 @@
 //! Protocol particle as a widget: name, short hash, optional rank.
-//! Not the tape particle (`crate::particle`). This is the cybergraph atom.
+//! Not the tade particle (`crate::particle`). This is the cybergraph atom.
 
 use crate::atoms::glass::{GlassDepth, glass};
 use crate::theme;

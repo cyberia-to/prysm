@@ -2,7 +2,7 @@ use crate::atoms::glass::{GlassDepth, glass};
 use crate::molecules::action::ActionButton;
 use crate::theme;
 use bevy::prelude::*;
-use tape::{Chunk, decode_nested, render, sigil};
+use tade::{Chunk, decode_nested, render, sigil};
 
 #[derive(Component)]
 pub struct TableRoot;

@@ -9,9 +9,9 @@ use bevy::prelude::*;
 use prysm::{
     theme, atoms::{glass, GlassDepth},
     layout::scrollback::{StreamPlugin, StreamChannel, StreamScrollback},
-    tape::{Chunk, sigil, render, encode_nested, table_chunk},
+    tade::{Chunk, sigil, render, encode_nested, table_chunk},
 };
-use prysm::tape::bytes::Bytes;
+use prysm::tade::bytes::Bytes;
 
 fn main() {
     App::new()
@@ -75,7 +75,7 @@ fn setup(mut commands: Commands) {
 fn send_demo_chunks(channel: Res<StreamChannel>) {
     let tx = &channel.tx;
 
-    tx.send(Chunk::text("Hello from tape. Every chunk type below is a native prysm particle.")).ok();
+    tx.send(Chunk::text("Hello from tade. Every chunk type below is a native prysm particle.")).ok();
     tx.send(Chunk::annotation("~/cyber/cyb  ·  main")).ok();
     tx.send(Chunk::new(sigil::PAT, render::TEXT, Bytes::from_static(b"@alice"))).ok();
 

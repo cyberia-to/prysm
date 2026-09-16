@@ -3,7 +3,7 @@
 // crystal-type: source
 // crystal-domain: comp
 // ---
-//! prysm — read a tape stream as prysm reads it: what each frame *becomes*.
+//! prysm — read a tade stream as prysm reads it: what each frame *becomes*.
 //!
 //!   prysm render [file]    decode a stream → the molecule each frame renders as
 //!   prysm molecules        the routing table: (sigil, render) → molecule
@@ -11,14 +11,14 @@
 //! prysm proper renders meaning to a GPU surface (Bevy). This CLI is its terminal
 //! shadow: it applies the same `(sigil, render) → molecule` routing and shows the
 //! content as text — text as text, a log as a log line, a table as a note — so
-//! you can read a stream's *meaning* where `tape inspect` shows its envelope.
+//! you can read a stream's *meaning* where `tade inspect` shows its envelope.
 //!
 //! SYNC: the routing table below mirrors `prysm/system/rs/scrollback.rs` — keep
 //! them in step.
 
 use std::io::{self, IsTerminal, Read};
 
-use tape::{render, sigil, Chunk, ReadResult, Reader};
+use tade::{render, sigil, Chunk, ReadResult, Reader};
 
 fn tty() -> bool {
     io::stdout().is_terminal()
@@ -91,7 +91,7 @@ fn banner() {
     }
     println!("{LOGO}");
     println!("{}", paint("37", "    the visual protocol"));
-    println!("{}", dim("\n    meaning, not pixels · molecules decoded from tape\n"));
+    println!("{}", dim("\n    meaning, not pixels · molecules decoded from tade\n"));
 }
 
 fn help() {

@@ -1,7 +1,7 @@
 use crate::atoms::glass::{GlassDepth, glass};
 use crate::theme;
 use bevy::prelude::*;
-use tape::{Chunk, decode_nested, render, sigil};
+use tade::{Chunk, decode_nested, render, sigil};
 
 /// Census card: a big value over a micro caption, glass hairline.
 pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {

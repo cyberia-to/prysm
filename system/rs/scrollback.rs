@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use bevy::prelude::*;
 use crossbeam_channel::{Receiver, Sender, unbounded};
-use tape::{Chunk, ChunkId, sigil, render, read_kv};
+use tade::{Chunk, ChunkId, sigil, render, read_kv};
 
 // ── StreamChannel ─────────────────────────────────────────────────────────────
 

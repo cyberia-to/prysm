@@ -7,7 +7,7 @@ license = "Cyber"
 
 [dependencies]
 neuron-model = { path = "../neuron/model", default-features = false }
-tape       = { package = "tade", path = "../tade/impl/rust" }
+tade       = { path = "../tade/impl/rust" }
 bevy = "0.18.0"
 crossbeam-channel = "0.5"
 

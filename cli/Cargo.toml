@@ -10,4 +10,4 @@ path = "src/main.rs"
 
 [dependencies]
 # only the frame format — the CLI shows prysm's routing without the Bevy renderer
-tape = { package = "tade", path = "../../tade/impl/rust" }
+tade = { path = "../../tade/impl/rust" }
