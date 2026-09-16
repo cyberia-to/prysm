@@ -1,172 +1,116 @@
 ---
-tags: prysm, cyb, core
+tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
 
 the composition model of [[prysm]]
 
-prysm is built from three levels, each constructed from the previous. this page defines what each level is, what it knows, what it must expose, and the rules that govern composition between levels
-
-```
-atom  →  molecule  →  cell
+```text
+atom → molecule → view
 ```
 
-three levels. no more. no intermediate "section" or "panel" or "view." every visual artifact in [[cyb]] decomposes into exactly these three. the system is closed
+These are three composition categories, not a signing hierarchy or a limit of
+three tree depths. Molecules may contain molecules. The former UI term `cell`
+means a view here; it must not be reintroduced as a runtime subject.
 
----
+[Cyb anatomy](../../../cyb/anatomy.md) and [robot/neuron/prog architecture](../../../cyb/specs/architecture.md)
+govern ownership. Layouts, ECS names and interactions in this design catalog are
+proposed UI contracts. Code coverage, renderer parity and performance measurements
+require separate audit evidence; design examples alone make no release claim.
 
-## atom
+## Atom
 
-an atom is an **irreducible capability carrier**. one capability. no domain knowledge. it accepts data and [[emotion]], renders a visual, and emits events
+An atom supplies one rendering or input primitive. It accepts typed data, emotion
+and a constraint, returns occupied size, renders a surface and emits input events.
+It has no children and no ambient access to stores, keys or network services.
+“Capability” in a rendering description means a visual ability, not a Ward grant.
 
-an atom does not know:
-- what a [[neuron]] is (the `neuron` atom knows only bech32 formatting)
-- what a [[particle]] represents (the `image` atom knows only how to render raster pixels)
-- what a [[cyberlink]] means (no atom knows this)
-- what cell it lives in
+A text atom formats a string. An address atom uses an explicit display profile
+over retained subject bytes; Bech32 is one possible display profile, not
+the definition of identity. An image atom renders bounded decoded pixels. Atoms
+do not infer the meaning, authorship or authority of the data they display.
 
-an atom does know:
-- its size in quanta $g$
-- its [[emotion]] color
-- its rendering pipeline
-- its leaf type in the element tree $\mathcal{T}$
+## Molecule
 
-atoms are organized in four families. see [[prysm/atoms]] for the full list
-
-### atom contract
+A molecule composes atoms or other molecules into a shaped widget: a button,
+table, neuron-card or timeline. It validates its typed props, emits typed intent,
+and declares fold conformations. Geometry is local to the widget; view-specific
+data arrives through props rather than a global store.
 
 | input | output |
 |-------|--------|
-| `data` — typed payload (string, CID, value) | rendered surface |
-| `emotion` — color from the [[emotion]] system | events (tap, drag, focus, blur) |
-| `constraint c` — from membrane (§4.1 of [[prysm/layout]]) | `size s` — to membrane (§4.2 of [[prysm/layout]]) |
+| typed projection and evidence | rendered subtree |
+| emotion and constraint | occupied size and selected conformation |
+| local input events | selection, navigation or action intent |
 
-every atom is a leaf in $\mathcal{T}$. atoms have no sub-organelles
+A neuron-card knows the subject's domain, display profile and supplied evidence.
+It does not own the neuron or authenticate a subject merely by rendering its
+address. Molecule IDs and ECS entity IDs identify UI objects only.
 
----
+## View
 
-## molecule
+A view is a navigable composition of molecules. It owns presentation state,
+filters and subscriptions through host-provided adapters. It can be full-screen
+or embedded. Pages, tabs and panels are view/widget arrangements, not subjects.
 
-a molecule is **a composition of atoms with intrinsic shape and behavior**
-
-the shape is part of the type identity. a `button` is always a horizontal saber-text-saber arrangement that emits tap. a `table` is always a grid of rows. a `toggle` is always a glass track with a glass thumb. the arrangement geometry is not a layout decision applied from outside — it is what makes a button a button
-
-molecules know their domain. they understand:
-- what a [[neuron]] address is, how to truncate it, when to show the verified glyph
-- what a [[particle]] is, how to dispatch to the right atom by content type
-- what a [[cyberlink]] looks like (the `graph` molecule renders directed edges with weight)
-- what their input contract is and how to validate it
-
-molecules accept typed data, emit typed actions, and declare **fold conformations** — alternative layouts they collapse to as their container shrinks. see §4.3 of [[prysm/layout]]
-
-### molecule contract
+A view may inspect several neurons and networks. The robot may attach zero, one
+or many neurons in observation, control or delegated modes. Opening a view or
+inspecting a neuron/prog never creates, attaches, selects or executes that subject.
+Another tab or independent program lifecycle does not require another key.
 
 | input | output |
 |-------|--------|
-| `data` — typed structure for the molecule's domain | rendered tree of atoms |
-| `emotion` — inherited from cell, may be recomputed | typed actions (submit, navigate, select) |
-| `constraint c` from cell | `size s` (chosen conformation) to cell |
-| `fold set` $\mathcal{F}$ | active conformation $l_k \in \mathcal{F}$ |
+| viewport and typed Route | rendered molecule tree and navigation intent |
+| authorized data projection, origin and freshness | display state and emotion |
+| separately captured action context, without secrets | exact action intent for the host |
 
-molecules are **transferable**. the `neuron-card` in oracle is the same molecule as the `neuron-card` in brain. molecules carry no cell-specific code
+Views may share projections and local navigation state through the host. Durable
+behavior belongs to a prog executed by a neuron; its state, continuations and
+effect records belong to Cybergraph/BBG. View closure, prog cancellation and
+neuron detachment are different operations. Log renders retained history.
 
-see [[prysm/molecules]] for the full catalog
+## Navigation and authority
 
----
+[Route](../../../neuron/specs/navigation.md) distinguishes View, Particle,
+Neuron and Prog. Subject/prog references retain their identity domain, original
+identifier and optional explicit network. No network means unqualified inspection,
+not an implicit choice of the currently selected network. Example view routes are
+`cyb://view/brain` and `cyb://view/sigma`; internal tab state is not an arbitrary
+extension of the canonical URI grammar.
 
-## cell
+Legacy `cell://ID` needs an exact resolver mapping. Cyb's built-in mapping is only
+`cell://landing` → `cyb://view/robot`; unknown IDs stay unresolved. This alias does
+not authorize code loading. Legacy landing source lives at
+[cyb/pages/landing.rune](../../../cyb/pages/landing.rune).
 
-a cell is **a full-screen application** — the top-level unit of the cyb ecosystem
+Before dispatch, the host captures the controlled attachment, binding revision,
+subject, network, prog/invocation or native caller, payload, grant and resource
+reservation. Ward evaluates the current grant and revocation; Vault carries out
+the permitted key operation. Props and checkpoints contain references, not keys.
+Changing the UI selection cannot reauthor an outstanding action or its response.
+Actions through another attachment need an explicit permitted binding.
 
-a cell knows:
-- its [[cybergraph]] domain (oracle queries the rank field, sigma queries token balances, brain queries the graph topology)
-- its data sources (which RPCs, which subscriptions)
-- its routing (which sub-paths it owns under `cyb://app/<cell>/`)
-- its state management (how it caches, when it invalidates)
-- how to compute [[emotion]] from chain state and pass it down to molecules
+UI events such as navigate, notify or record are local adapter messages. They are
+not automatically signed cyberlinks. A profile that persists or publishes them
+must specify authorship, bytes, disclosure, ordering and failure handling. Local
+commit, transport delivery, remote acceptance and network finality remain distinct.
 
-a cell composes molecules. it does not compose atoms directly — that is the molecule's job. if a cell needs a new atom arrangement, that arrangement IS a molecule, and graduates to [[prysm/molecules]]
+## The composition tree
 
-each cell is a complete, standalone experience. cells share no runtime state. communication between cells happens through the cybergraph: one cell submits a [[cyberlink]], another reads it on the next block
-
-### cell contract
-
-| input | output |
-|-------|--------|
-| viewport $\square$ | rendered molecule tree |
-| chain state (via [[soft3]]) | [[cyberlink]] submissions |
-| neuron identity (keys) | navigation events (back/forward, deep links) |
-| route path | [[emotion]] computed and propagated down |
-
-see [[aos]] for the cell catalog
-
----
-
-## the composition tree
-
-every cyb screen is a single element tree $\mathcal{T}$:
-
-```
-cell                              ← root
-├── molecule (mind/commander)     ← always present
+```text
+view
+├── molecule (com projection)
 ├── molecule (tabs)
 │   ├── atom (text)
-│   ├── atom (vector)
 │   └── atom (saber)
-├── molecule (table)
-│   ├── molecule (neuron-card)
-│   │   ├── atom (neuron)
-│   │   ├── atom (vector)
-│   │   └── atom (text)
-│   └── molecule (pill) × n
-└── molecule (graph)
-    └── atom (saber) × m            ← cyberlinks
+└── molecule (table)
+    └── molecule (neuron-card)
+        ├── atom (address)
+        └── atom (image)
 ```
 
-the tree has exactly three layer types: cell at the root, molecules in the interior, atoms at the leaves. no other depth. no atoms-inside-cells (must go through molecules). no molecules-inside-atoms
-
----
-
-## interfaces
-
-every component at every level exposes the same shape:
-
-| facet | content |
-|-------|---------|
-| inputs | data, emotion, context (constraint, route, neuron) |
-| outputs | action, state change, [[cyberlink]] |
-| states | default · hover · active · disabled (+ loading · error · empty · expanded where stateful) |
-
-[[emotion]] overlays any state with a color signal computed by the [[emotion]] function
-
----
-
-## transferability
-
-molecules are pure functions of their props. lift a molecule from oracle, drop it in brain — it works identically, because:
-
-- molecules know no cell-specific data
-- molecules carry no cell-specific styling (style flows from [[emotion]] + [[palette]])
-- molecules accept all data through props, never reach into a global store
-
-this is what makes prysm a **system**, not a collection of widgets
-
----
-
-## what does not exist
-
-these are not levels in the prysm composition model:
-
-- **section** — a section is just a stack-container molecule
-- **panel** — a panel is just a glass-wrapped molecule
-- **page** — a page is just a cell at a route
-- **screen** — a screen is just the viewport projection of a cell
-- **layout** — layout is the protocol, not a level (see [[prysm/layout]])
-- **template** — every cell IS the template; composition handles variation
-
-three levels generate everything. adding a fourth multiplies complexity without adding capability. the discipline of three is itself a design decision
-
----
-
-*the closure of the system is the proof of its completeness*
+Biological cells remain a metaphor in layout research. Grid/table cells and
+terminal character cells remain geometric/rendering units. None adds a CellId,
+subject key or authorization layer to the robot → neurons model.

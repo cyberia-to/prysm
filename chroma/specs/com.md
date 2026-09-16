@@ -1,33 +1,36 @@
 ---
 tags: prysm, cyb, chroma
-alias: command, commander, mind
+alias: command, commander
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 commander chrome — bottom-center
 
-**command**: where [[neurons]] express intent. push buttons, make decisions, ask questions, issue commands. every action in [[cyb]] flows through com
+Com is the user's input surface: buttons, decisions, questions and commands. Scheduled and autonomous work can enter through Plan/Soma as well; every effect still passes the same authority boundary.
 
 ## protocol role
 
-mind is a molecule in the element tree $\mathcal{T}$. membrane = commander zone of [[prysm/grid]] (row 3, col 2). fill × fix($6g$). $\mathcal{U} = 20$ (active)
+com is a molecule in the element tree $\mathcal{T}$. membrane = commander zone of [[prysm/grid]] (row 3, col 2). fill × fix($6g$). $\mathcal{U} = 20$ (active)
 
 ## core function
 
-com is the input surface. every other chroma receives and displays — com is where the neuron acts. it is the only chroma that initiates signals to [[spacetime]] via user input.
+com emits typed intent. Before dispatch the host captures the acting attachment, subject, binding revision, network, prog/invocation or native caller, exact payload, grant and resource reservation. Ward checks current authority and Vault performs scoped key operations. Input focus, suggested text and button color are not authorization.
 
 com adapts to context: the active world determines which commands are available, which suggestions appear in [[ad]], and what the placeholder text says.
 
 ## command palette
 
-`⌘K` opens the palette. type anything:
+Proposed shortcut: `⌘K` opens the palette. Type anything:
 
-- a query → routes to [[cyb/oracle]]
-- a page name → opens in [[cyb/brain]]
-- a command → executes immediately
+- a query → requests graph search or Soma assistance
+- a page name → resolves a typed view/particle destination
+- a command → prepares a typed action for current policy evaluation
 - a CID → resolves the [[particle]]
-- an address → opens the [[neuron]] profile
+- a qualified subject address → inspects the neuron; ambiguous domains require explicit resolution
 
 fuzzy matching. recent commands. context-aware suggestions from current view.
 
@@ -36,30 +39,32 @@ fuzzy matching. recent commands. context-aware suggestions from current view.
 | action | what happens |
 |--------|-------------|
 | link | create a [[cyberlink]] between two [[particles]] |
-| send | transfer [[tokens]] via [[cyb/sigma]] |
-| sign | approve a transaction |
+| send | transfer [[tokens]] via [Sigma](sigma.md) |
+| sign | request scoped signing of a captured, authorized payload |
 | publish | push a [[particle]] to the [[cybergraph]] |
 | stake | delegate to a subnet |
-| ask | submit a query to [[cyb/oracle]] |
-| navigate | open a page in [[cyb/brain]] |
+| ask | submit a read/query or Soma task under its declared policy |
+| navigate | inspect a typed destination without attaching or executing it |
 
-actions are composable: search → select → link → publish as one chain
+actions may compose as search → select → link → publish. Each effect retains its captured authority, result and failure state; a chain of UI steps is not an atomic transaction or a blanket grant.
 
-## keyboard
+## Proposed keyboard bindings
 
 - `⌘K` command palette
-- `/` search in [[cyb/oracle]]
+- `/` focus Com/search
 - `⌘L` new [[cyberlink]]
-- `⌘S` sign pending transaction
+- `⌘S` request the signing flow for the captured pending transaction
 - `⌘P` publish current [[particle]]
-- `Tab` cycle between [[cyb/brain]] tabs
+- `Tab` cycle between view controls/tabs according to focus rules
 - `Esc` back / close / cancel
 
 ## voice and text
 
-com accepts natural language. the [[cyb/onnx]] SLM parses intent from free text and maps it to structured commands: "stake 100 CYB on subnet 3" → delegation transaction → [[cyb/signer]]
+Com accepts natural-language intent. Soma interprets it under Soul configuration; Voice supplies speech input. For example, “stake 100 CYB on subnet 3” can produce a delegation proposal, which still needs an explicit subject/network/asset profile and the host authorization path. Model text does not sign or select an identity.
 
-## cyberlinks
+## Proposed host events
+
+These events are local adapter messages unless a declared persistence/publication profile turns them into authored records.
 
 | sends to | token | meaning |
 |----------|-------|---------|
@@ -67,7 +72,7 @@ com accepts natural language. the [[cyb/onnx]] SLM parses intent from free text 
 | spacetime | switch-renderer | replace active renderer |
 | ad | submit (partial) | partial text → suggestion request |
 | sigma | send | token transfer initiated |
-| time | record | log command |
+| log/time | record | display the retained command and effect outcome from Cybergraph/BBG |
 
 | receives from | token | meaning |
 |---------------|-------|---------|
@@ -103,16 +108,16 @@ $\mathcal{F}$:
 
 ## contextual adaptation
 
-| active cell | placeholder | primary action |
+| active destination | placeholder | primary action |
 |------------|-------------|----------------|
-| oracle/search | "ask the cybergraph" | Search |
+| graph search | "ask the cybergraph" | Search |
 | terminal | "enter command" | Run |
 | sense/@ | "send message" | Send |
 | sense/llm | "ask the model" | Ask |
 | sigma/send | "enter recipient" | Send |
-| portal | "generate identity" | Confirm |
+| sigma/neurons | "attach, observe, or explicitly create" | Review |
 
-content replacement within the same conformation — structure stays, labels and available actions change per cell
+content replacement within the same conformation — structure stays, labels and available actions change per destination
 
 ## emotion
 
@@ -121,7 +126,7 @@ saber underline of the input field carries [[emotion]]:
 | state | glow-color | trigger |
 |-------|-----------|---------|
 | idle | #ffffff (white) | no activity |
-| typing | #00fe00 (green) | neuron is entering text |
+| typing | #00fe00 (green) | user is entering text |
 | error | #ff0000 (red) | invalid input, failed transaction |
 | signing | #00fe00 (green, pulsing) | [[cyberlink]] being signed |
 | success | #00fe00 (green, fades) | action completed |
@@ -144,15 +149,25 @@ commander renders at fixed $p_z$ ($\mathcal{U} = 20$) — does not recede with g
 
 ## ECS
 
-- Entity: mind organelle
+- Entity: com organelle
 - Components:
   - `Sizing { width: Fill, height: Fix(6) }`
   - `GridArea { name: "commander" }`
   - `FoldSet { conformations }`
-  - `ActiveCell { cell_id }`
+  - `ActiveDestination { route }`
   - `InputState { text, focused, emotion }`
   - `SaberGlow { color, spread }`
 - Systems:
-  - `MindContextSystem` reads `ActiveCell`, updates placeholder and available actions
-  - `MindInputSystem` handles focus, typing, submission
-  - `MindEmotionSystem` reads input state and action result, writes `SaberGlow`
+  - `ComContextSystem` reads `ActiveDestination`, updates placeholder and available actions
+  - `ComInputSystem` handles focus, typing, submission
+  - `ComEmotionSystem` reads input state and action result, writes `SaberGlow`
+
+## Destination contract
+
+`Route` is defined by [neuron navigation](../../../neuron/specs/navigation.md).
+It carries View, Particle, Neuron or Prog plus an optional explicit network.
+A view/tab has no subject key. Inspecting a neuron or prog does not attach, select
+or execute it. Commander actions separately capture the controlled attachment,
+binding revision and network; late responses retain that capture.
+Legacy `cell://` targets require an exact mapping; the built-in `landing` target
+is the robot view. An unknown origin never becomes a neuron or loaded program.

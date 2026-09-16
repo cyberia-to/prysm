@@ -2,7 +2,10 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 data grid molecule in [[prysm]]
 
@@ -57,6 +60,10 @@ filter: predicate $f: row \to \{\text{true}, \text{false}\}$. hidden rows get $s
 sort: ordering $\sigma$ on rows. changes placement, not sizing
 
 both applied before layout pass. ECS: `GridFilter`, `GridSort`, `FilterSortSystem`
+
+Rows retain their subject, identity domain, network and source evidence even when
+columns are folded or sorted. A shared display address or token ticker is not a
+row identity; aggregation must disclose its scope and preserve the original rows.
 
 ## variants
 

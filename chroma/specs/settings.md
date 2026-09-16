@@ -3,13 +3,16 @@ tags: prysm, cyb, chroma
 alias: settings, configuration
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
 
-settings cell — accessible from [[ava]]
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
-system configuration of [[cyb]]. manage keys, backends, networks, tokens, channels, hotkeys, and AI models. left sidebar menu with 8 sections
+settings view — accessible from the robot menu
 
-not a chrome slot — opens in [[spacetime]] when triggered from [[ava]] (avatar zone → "Settings")
+Settings presents Soul configuration, Sigma attachment management, Vault key references and adapter configuration. Sidebar sections are UI groupings, not organs or signing subjects.
+
+Not a chrome slot: opens as a view from the robot menu. Avatar visualizes the robot; menu placement grants no identity or key ownership.
 
 ## structure
 
@@ -34,7 +37,7 @@ glass [fill × fill, depth background]
 
 ### Keys
 
-manage neuron keypairs and avatar access
+Manage qualified neuron attachments and Vault references. Show observation/control/delegated mode, domain, network and binding revision. Key creation, import, rotation and attachment are distinct explicit actions; display-address reuse cannot merge subjects.
 
 ```
 glass [fill × auto, depth midground]
@@ -43,14 +46,14 @@ glass [fill × auto, depth midground]
   text [caption, "key"] + pill [neutral, "cybergirl"]
   text [caption, "at path"] + pill [neutral, "44/118/0/0/0"]
   text [caption, "from neuron"] + address [small, with hash bars]
-  text [caption, "gives"] + pill [green, "write"] + text [caption, "access to avatars:"]
+  text [caption, "attachment"] + pill [neutral, "control / delegate / observe"] + text [caption, "subject and network:"]
 ```
 
-commander: "add new key"
+Commander offers explicit attach, observe, create or import flows. The derivation path above is a foreign-profile example, not a universal identity derivation. Secret key material never enters view props or logs.
 
 ### Drive
 
-backend status and IPFS configuration
+Storage/content adapter status and configuration. The following is a historical web-backend display sketch; current status must come from the actual host components (Cybergraph/BBG, Radio, Soma and supported content adapters). It does not mandate a second database or legacy ML engine.
 
 ```
 text [h3, "Backend status"]
@@ -70,9 +73,11 @@ button ["Reconnect"]
 ### Signer
 
 ```
-text [h2, "Signer confirmation page"]
-toggle ["enabled"]
+text [h2, "Action review preferences"]
+toggle ["show optional review when policy permits"]
 ```
+
+Changing prompt preferences cannot disable Ward checks, current revocation, payload binding or Vault scope. Mandatory review remains mandatory under the active policy.
 
 ### Tokens
 
@@ -110,9 +115,11 @@ table
 
 ```
 text [h2, "LLM"]
-text [body, "openai/gpt-4o-mini"]
-pill [yellow, "GPT-4o-mini"]
+text [body, "configured provider / model revision"]
+pill [neutral, "Soma model profile"]
 ```
+
+Model and provider choices belong to Soul/Soma configuration. Remote inference access, credential references and data disclosure require their declared policy; selecting a model does not grant signing authority. Foreign token/network/channel fields above retain adapter-defined bytes and meanings.
 
 ## fold
 
@@ -130,7 +137,7 @@ $\mathcal{F}$:
 
 ## ECS
 
-- Entity: settings-cell organelle
+- Entity: settings view
 - Components:
   - `Sizing { width: Fill, height: Fill }`
   - `FoldSet { conformations }`
@@ -142,5 +149,5 @@ $\mathcal{F}$:
 - Systems:
   - `SettingsMenuSystem` handles section navigation
   - `SettingsBackendSystem` manages backend connection, logs, reconnect
-  - `SettingsKeySystem` manages keypairs
+  - `SettingsKeySystem` emits scoped attachment/key-management intents through Sigma/Ward/Vault
   - `SettingsRegistrySystem` manages tokens/networks/channels tables
