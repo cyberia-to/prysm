@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use tape::Chunk;
+use tade::Chunk;
 use crate::theme;
 
 pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
-    let m = tape::read_kv(&chunk.payload);
+    let m = tade::read_kv(&chunk.payload);
     let level   = kv_str(&m, "level",   "info");
     let source  = kv_str(&m, "source",  "");
     let message = kv_str(&m, "message", "");

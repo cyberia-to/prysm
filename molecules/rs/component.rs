@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use tape::{Chunk, decode_nested};
+use tade::{Chunk, decode_nested};
 use crate::theme;
 
 pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {

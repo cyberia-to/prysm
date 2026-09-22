@@ -19,7 +19,7 @@
 #[path = "../system/rs/mod.rs"]      pub mod layout;
 
 pub use cyb_core as core;
-pub use tape;
+pub use tade;
 
 pub use theme::{
     G, ACID_BLUE, ACID_GREEN, ACID_RED, ACID_ORANGE, ACID_YELLOW, ACID_INDIGO, ACID_VIOLET,
