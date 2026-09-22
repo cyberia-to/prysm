@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use tape::{Chunk, sigil, render, decode_nested};
+use tade::{Chunk, sigil, render, decode_nested};
 use crate::theme;
 
 #[derive(Component)]

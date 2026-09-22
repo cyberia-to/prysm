@@ -9,9 +9,9 @@ use bevy::prelude::*;
 use prysm::{
     theme, atoms::{glass_bg, GlassDepth},
     layout::scrollback::{StreamPlugin, StreamChannel, StreamScrollback},
-    tape::{Chunk, sigil, render, encode_nested, table_chunk},
+    tade::{Chunk, sigil, render, encode_nested, table_chunk},
 };
-use prysm::tape::bytes::Bytes;
+use prysm::tade::bytes::Bytes;
 
 fn main() {
     App::new()
