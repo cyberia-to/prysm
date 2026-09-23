@@ -5,12 +5,16 @@ use crate::theme;
 #[derive(Component)]
 pub struct TableRoot;
 
-pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
-    let rows = decode_nested(&chunk.payload);
+/// Extract header labels and data-row cell text from a table chunk's nested
+/// payload: a `(/, s)` schema row of headers followed by zero or more `(:, s)`
+/// data rows of cells (the shape `tade::table_chunk` builds). Any other sigil
+/// or render at either level is skipped rather than rejected, so a stream
+/// producer can interleave unrelated chunks without corrupting the table.
+pub fn parse_table(rows: &[Chunk]) -> (Vec<String>, Vec<Vec<String>>) {
     let mut headers: Vec<String>       = Vec::new();
     let mut data_rows: Vec<Vec<String>> = Vec::new();
 
-    for row in &rows {
+    for row in rows {
         if row.sigil == sigil::FAS && row.render == render::STRUCT {
             for h in decode_nested(&row.payload) {
                 headers.push(String::from_utf8_lossy(&h.payload).into_owned());
@@ -22,6 +26,13 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
                 .collect());
         }
     }
+
+    (headers, data_rows)
+}
+
+pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
+    let rows = decode_nested(&chunk.payload);
+    let (headers, data_rows) = parse_table(&rows);
 
     let root = commands.spawn((
         TableRoot,
@@ -91,4 +102,94 @@ fn spawn_cell(commands: &mut Commands, row: Entity, text: &str, is_header: bool)
         },
         ChildOf(row),
     ));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tade::table_chunk;
+
+    fn rows_of(chunk: &Chunk) -> Vec<Chunk> {
+        decode_nested(&chunk.payload)
+    }
+
+    #[test]
+    fn empty_table_yields_no_headers_no_rows() {
+        let chunk = table_chunk(&[], vec![]);
+        let (headers, data) = parse_table(&rows_of(&chunk));
+        assert!(headers.is_empty());
+        assert!(data.is_empty());
+    }
+
+    #[test]
+    fn headers_only() {
+        let chunk = table_chunk(&["a", "b", "c"], vec![]);
+        let (headers, data) = parse_table(&rows_of(&chunk));
+        assert_eq!(headers, vec!["a", "b", "c"]);
+        assert!(data.is_empty());
+    }
+
+    #[test]
+    fn headers_and_data_rows() {
+        let chunk = table_chunk(
+            &["name", "count"],
+            vec![
+                vec![Chunk::text("alpha"), Chunk::text("1")],
+                vec![Chunk::text("beta"), Chunk::text("2")],
+            ],
+        );
+        let (headers, data) = parse_table(&rows_of(&chunk));
+        assert_eq!(headers, vec!["name", "count"]);
+        assert_eq!(data, vec![
+            vec!["alpha".to_string(), "1".to_string()],
+            vec!["beta".to_string(), "2".to_string()],
+        ]);
+    }
+
+    #[test]
+    fn data_only_no_schema_row() {
+        // table_chunk always emits a schema row, so build the nested payload
+        // by hand to cover a producer that sends only data rows.
+        let data_row = Chunk::new(sigil::COL, render::STRUCT, tade::encode_nested(&[
+            Chunk::text("x"), Chunk::text("y"),
+        ]));
+        let (headers, data) = parse_table(&[data_row]);
+        assert!(headers.is_empty());
+        assert_eq!(data, vec![vec!["x".to_string(), "y".to_string()]]);
+    }
+
+    #[test]
+    fn ragged_rows_preserve_their_own_cell_count() {
+        let chunk = table_chunk(
+            &["a", "b"],
+            vec![
+                vec![Chunk::text("only-one")],
+                vec![Chunk::text("x"), Chunk::text("y"), Chunk::text("z")],
+            ],
+        );
+        let (_, data) = parse_table(&rows_of(&chunk));
+        assert_eq!(data[0], vec!["only-one".to_string()]);
+        assert_eq!(data[1], vec!["x".to_string(), "y".to_string(), "z".to_string()]);
+    }
+
+    #[test]
+    fn non_ascii_cell_text_round_trips() {
+        let chunk = table_chunk(&["名前"], vec![vec![Chunk::text("日本語")]]);
+        let (headers, data) = parse_table(&rows_of(&chunk));
+        assert_eq!(headers, vec!["名前"]);
+        assert_eq!(data, vec![vec!["日本語".to_string()]]);
+    }
+
+    #[test]
+    fn unrelated_sigil_or_render_at_row_level_is_skipped() {
+        // Neither a schema nor a data row by this function's contract: ignored,
+        // not an error, so a stream can interleave unrelated chunks.
+        let stray = Chunk::annotation("not a table row");
+        let chunk = table_chunk(&["a"], vec![vec![Chunk::text("1")]]);
+        let mut rows = rows_of(&chunk);
+        rows.push(stray);
+        let (headers, data) = parse_table(&rows);
+        assert_eq!(headers, vec!["a"]);
+        assert_eq!(data, vec![vec!["1".to_string()]]);
+    }
 }
