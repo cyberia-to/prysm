@@ -139,10 +139,13 @@ fn spawn_lane(commands: &mut Commands, parent: Entity, header: bool, i: usize) -
 }
 
 fn split_target(mut cells: Vec<String>) -> (Vec<String>, Option<String>) {
-    if cells
-        .last()
-        .is_some_and(|c| c.starts_with("particle:") || c.starts_with("cyb://"))
-    {
+    if cells.last().is_some_and(|c| {
+        c.starts_with("particle:")
+            || c.starts_with("cyb://")
+            || c.starts_with("model:")
+            || c.starts_with("fetch:")
+            || c.starts_with("vault:")
+    }) {
         let t = cells.pop();
         (cells, t)
     } else {
