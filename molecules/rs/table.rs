@@ -41,7 +41,7 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
         .len()
         .max(data_rows.iter().map(|(c, _)| c.len()).max().unwrap_or(0))
         .max(1);
-    let tracks = column_tracks(cols);
+    let tracks = column_tracks(cols, &headers);
 
     let (fill, hair) = glass(GlassDepth::Midground);
     let root = commands
@@ -101,11 +101,12 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
 
 /// One width per column, same on every lane. First column takes the leftover;
 /// the rest are equal tracks. Percents sum to 100.
-fn column_tracks(n: usize) -> Vec<f32> {
+fn column_tracks(n: usize, headers: &[String]) -> Vec<f32> {
     match n {
         0 | 1 => vec![100.0],
         2 => vec![62.0, 38.0],
         3 => vec![50.0, 25.0, 25.0],
+        4 if headers.first().is_some_and(|h| h == "from") => vec![38.0, 38.0, 12.0, 12.0],
         4 => vec![54.0, 14.0, 18.0, 14.0],
         n => {
             let rest = 56.0 / (n as f32 - 1.0);
@@ -145,6 +146,7 @@ fn split_target(mut cells: Vec<String>) -> (Vec<String>, Option<String>) {
             || c.starts_with("model:")
             || c.starts_with("fetch:")
             || c.starts_with("vault:")
+            || c.starts_with("work:")
     }) {
         let t = cells.pop();
         (cells, t)
