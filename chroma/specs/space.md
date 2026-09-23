@@ -1,13 +1,16 @@
 ---
 tags: prysm, cyb, chroma
-alias: where, context
+alias: navigation context
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 location chrome — top-left
 
-**where**: shows the neuron's current position in the [[cyb]] world tree. breadcrumb trail of the active world and context. tells every other chroma what is active in [[spacetime]]
+This widget presents Now's context and the inspected typed destination. Its breadcrumb describes the active view and particle; it does not select an acting neuron. Now is the context organ under [anatomy](../../../cyb/anatomy.md); space is the area in which a view renders.
 
 ## protocol role
 
@@ -15,16 +18,16 @@ context is a molecule in the element tree $\mathcal{T}$. membrane = context zone
 
 ## core function
 
-orientation — the neuron always knows where they are. space renders the active world name, the current path inside it, and a breadcrumb trail back to root.
+orientation — the user can inspect the current destination and context. space renders the active world name, the current path inside it, and a breadcrumb trail back to root.
 
-receives: `(spacetime, space, locate, …)` cyberlinks whenever the active renderer changes. updates immediately — no polling.
+receives host navigation events when the active renderer changes. A UI event is not automatically a persisted or signed cyberlink.
 
-## cyberlinks
+## Proposed host events
 
 | receives from | token | meaning |
 |---------------|-------|---------|
 | spacetime | locate | renderer switched — update breadcrumb |
-| brain | navigate | file path changed inside brain |
+| brain / memory | navigate | graph destination or file projection path changed |
 
 | sends to | token | meaning |
 |----------|-------|---------|
@@ -43,8 +46,8 @@ $s_{min} = (4g, 4g)$ — icon only
 
 ```
 glass [fix(25g) × fix(6g), depth midground]
-  vector [4g, cell icon]
-  text [caption, cell name / particle title / world name]
+  vector [4g, destination icon]
+  text [caption, destination label / particle title / world name]
 ```
 
 breadcrumb trail shows: world → section → particle (if deep)
@@ -75,6 +78,16 @@ tap → opens menu context (slide-out from left edge, z: 30)
   - `Sizing { width, height }`
   - `GridArea { name: "context" }`
   - `FoldSet { conformations }`
-  - `ContextSubject { cell_id, particle_cid, label }`
+  - `DisplayContext { route, label }`
   - `Trigger::Tap { opens: menu_context }`
-- System: `ContextSystem` reads current navigation state, writes `ContextSubject`
+- System: `ContextSystem` reads current navigation state, writes `DisplayContext`
+
+## Destination contract
+
+`Route` is defined by [neuron navigation](../../../neuron/specs/navigation.md).
+It carries View, Particle, Neuron or Prog plus an optional explicit network.
+A view/tab has no subject key. Inspecting a neuron or prog does not attach, select
+or execute it. Commander actions separately capture the controlled attachment,
+binding revision and network; late responses retain that capture.
+Legacy `cell://` targets require an exact mapping; the built-in `landing` target
+is the robot view. An unknown origin never becomes a neuron or loaded program.

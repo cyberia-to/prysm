@@ -2,11 +2,14 @@
 tags: prysm, cyb, core
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 the interaction protocol in [[prysm]]
 
-interaction is how a [[neuron]] acts on the element tree $\mathcal{T}$. the layout protocol (§4) produces coordinates. the [[prysm/emotion]] function produces colors. the interaction protocol produces state transitions. three independent systems, one interface
+interaction is how user input changes the element tree $\mathcal{T}$. the layout protocol (§4) produces coordinates. the [[prysm/emotion]] function produces colors. the interaction protocol produces state transitions. three independent systems, one interface
 
 ## input events
 
@@ -53,7 +56,7 @@ focus transitions:
 - tap on a focusable organelle → that organelle gains focus
 - tab key → focus moves to the next organelle in `NavigationOrder` (§17.2 of layout protocol)
 - shift+tab → previous in `NavigationOrder`
-- escape → focus moves to commander ([[prysm/mind]])
+- escape → focus moves to commander ([Com](../../chroma/specs/com.md))
 
 the commander is the focus root — pressing `/` from anywhere focuses the commander. this is the universal entry point
 
@@ -89,7 +92,7 @@ active is transient: $50\text{ms}$ visual feedback, then returns to default/hove
 
 ### pattern 2: focusable
 
-used by: [[prysm/input]], [[prysm/mind]]
+used by: [[prysm/input]], [Com](../../chroma/specs/com.md)
 
 ```
 states: { idle, focus, disabled }
@@ -127,14 +130,14 @@ state transitions produce actions — side effects outside the interaction proto
 
 | action | produced by | effect |
 |--------|-------------|--------|
-| navigate | tap on link, menu item, star, tab | router changes active [[cell]] / particle |
-| submit | tap confirm button, enter key in input | commander sends cyberlink / search / tx |
+| navigate | tap on link, menu item, star, tab | router inspects a typed View, Particle, Neuron or Prog destination |
+| submit | tap confirm button, enter key in input | Com emits a query or captured action intent; host policy governs effects |
 | toggle | tap on toggle, pill (on/off mode) | boolean state flips |
 | expand | tap on context, avatar, collapsible group | fold/unfold reveals/hides content |
 | drag-commit | drag-end on slider, star reorder | value or position written to state |
 | focus-change | tap on input, tab key, escape | focus moves between organelles |
 
-actions are events emitted by `InteractionSystem`, consumed by domain systems (router, tx signer, etc.). the interaction protocol defines when actions fire. domain systems define what actions do
+Actions are events emitted by `InteractionSystem` and consumed by explicit host adapters. Navigation carries a Route, not signing authority. Before an effect the host binds subject, attachment revision, network, payload and grant; Ward evaluates current permission and Vault performs only the scoped key operation. A tap, focus change, model suggestion or callback cannot bypass that boundary. Selection changes cannot reauthor an outstanding operation.
 
 ## visual feedback
 
@@ -163,7 +166,7 @@ global keyboard shortcuts — handled before focus-based key dispatch:
 | escape | all | lose focus → commander |
 | f | brain | toggle fullscreen |
 
-hotkeys are defined in [[prysm/settings-cell]] (Hotkeys section). the table above is the default set
+These proposed hotkeys are configured through the [settings view](../../chroma/specs/settings.md). They do not assert that each binding is currently implemented.
 
 ECS: `HotkeyMap { list of (key, modifier, action) }`. `HotkeySystem` reads key events before `FocusSystem` — if a hotkey matches, the event is consumed and does not reach focus dispatch
 

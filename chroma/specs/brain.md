@@ -3,53 +3,54 @@ tags: prysm, cyb, chroma
 alias: map
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 map chrome — bottom-left
 
-**map**: graph file manager. knowledge navigation — browse [[particles]], traverse [[cyberlinks]], explore the [[cybergraph]] neighborhood. the spatial memory of the [[neuron]]
+Brain is the rendered graph: browse particles, traverse cyberlinks and inspect neighborhoods. Memory is the separate filesystem/table/tile projection of particles. Both share Now's context; neither owns a signing identity.
 
-also the graph visualization molecule: renders [[particles]] as circles, [[cyberlinks]] as lines. shared between [[cyb/oracle]] (global graph) and [[robot]] (neuron's personal graph)
+The graph visualization molecule renders particles and links in several views, including network search and the robot's authorized personal projection. Subject and network filters retain their meaning across views.
 
 ## protocol role
 
-molecule in the element tree $\mathcal{T}$. in chrome: bottom-left grid zone. as spacetime cell: lives inside oracle-cell and robot-cell brain sub-pages, fills the space zone
+molecule in the element tree $\mathcal{T}$. in chrome: bottom-left grid zone. as a view: fills the space zone or embeds in search/robot views
 
 ## core function
 
-brain is the graph file manager. offline-first. core [[cell]] of [[cyb]].
+Brain presents Cybergraph data available through the host, including retained local data. It does not duplicate graph storage, authority or execution. Filesystem navigation belongs to Memory.
 
-## cyberlinks
+## Proposed host events
 
 | receives from | token | meaning |
 |---------------|-------|---------|
-| com | navigate | open path or CID in brain |
+| com | navigate | inspect a typed graph destination; filesystem paths go to Memory |
 | spacetime | locate | sync navigation to active world |
 
 | sends to | token | meaning |
 |----------|-------|---------|
 | brain | map | graph navigation self-feed |
 | spacetime | switch-renderer | open brain in space zone |
-| com | context | current path for command palette |
+| com | context | Now's inspected graph context for command preparation |
 
-## features (file manager)
+## Proposed graph and memory capabilities
+
+The historical JS-era file-manager list below is design input, not a current engine/API guarantee. Supported adapters must declare their query, content and publication profile.
 
 - [[cyb/offline]] first
 - localhost interface
 - renders: [[space]] (3D), [[shadow]] (depth), [[heap]] (2D map), [[list]] (table)
-- graph query language: [[datalog]] / full [[cozodb]] api
-- scripting: [[rune]]
+- graph queries through declared host adapters; historical Datalog/Cozo examples do not require a second storage owner
+- behavior: neuron-executed progs, including supported Rune programs
 - static and dynamic [[linking]], private and public [[linking]]
 - publishing to [[ipfs]] and [[cybergraph]]
 - particle formats: text, video, audio, image, pdf, epub, web2
 
-## paths
+## Destinations
 
-- `#` [[cyb/brain/particle]]
-- `!` [[cyb/brain/neuron]]
-- `@` [[cyb/brain/avatar]]
-- `~` [[cyb/brain/learn]]
-- `/` [[cyb/brain/root]]
+Use [typed Route values](../../../neuron/specs/navigation.md): View, Particle, Neuron or Prog, with an optional explicit network. A Memory path is a projection path, not a subject address. Historical `#`, `!`, `@`, `~` and `/` shorthand needs an explicit parser/adapter mapping; it must not silently create a subject, select an attachment or load code.
 
 ## graph visualization (molecule)
 
@@ -91,8 +92,8 @@ tap fullscreen → brain covers entire viewport, all grid zones hidden. only ren
 
 | context | what renders |
 |---------|-------------|
-| oracle brain | global cybergraph — all neurons' links |
-| robot brain | personal graph — this neuron's links only |
+| network search | graph data within the declared network, availability and disclosure scope |
+| robot brain | authorized graph projection across selected attachment filters; authors/domains stay separate |
 
 ### emotion
 
@@ -114,12 +115,12 @@ tap fullscreen → brain covers entire viewport, all grid zones hidden. only ren
 
 - 3d: orbit (drag), zoom (scroll)
 - 2d: pan (drag), zoom (scroll), tap particle → navigate
-- select 2 particles → create cyberlink
+- select 2 particles → prepare cyberlink intent with a separately captured acting attachment and network
 - Change limit → input + Confirm in commander
 
 ## 3D
 
-brain IS the 3D view. gravity from [[tri-kernel]] determines particle positions — high-focus particles near center
+Brain can render a 3D projection. A proposed layout may use sourced tri-kernel focus to influence positions; rank and proximity do not prove truth, authorship or permission.
 
 ## ECS
 
@@ -127,7 +128,7 @@ brain IS the 3D view. gravity from [[tri-kernel]] determines particle positions 
 - Components:
   - `Sizing { width: Fill, height: Fill }`
   - `BrainTab { graph_3d | graph_2d | last_cyberlinks }`
-  - `BrainContext { oracle | robot }`
+  - `BrainContext { route, subject_filters, network, disclosure_scope }`
   - `RenderLimit { count }`
   - `Fullscreen { bool }`
   - `SelectedParticles { list of particle, max 2 }`
@@ -135,4 +136,4 @@ brain IS the 3D view. gravity from [[tri-kernel]] determines particle positions 
   - `BrainFetchSystem` fetches graph data within limit
   - `BrainRender3dSystem` renders 3D scene
   - `BrainRender2dSystem` renders 2D force-directed layout
-  - `BrainCyberlinkSystem` handles particle selection + cyberlink creation
+  - `BrainCyberlinkSystem` handles particle selection and emits authorized host action intent
