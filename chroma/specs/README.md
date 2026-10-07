@@ -2,16 +2,29 @@
 tags: cyb, core, architecture
 crystal-type: entity
 crystal-domain: cyber
-alias: chroma architecture, the 9
+alias: chroma architecture, the 9, chroma painting
 ---
-# chroma
+# chroma — the painting side
 
-cyb's UI is a **3×3 grid**: eight fixed overlay elements ("chroma") arranged
-around a central renderer slot ("spacetime"). Each chroma owns a fixed
-screen position, a single semantic role, and a strictly typed
-[[cyberlink]] interface. Chromas never share state directly — every
-interaction crosses a typed cyberlink. The architecture is closed: the
-nine slots are the entire public surface of cyb.
+the shape of the agent's interface — the 3×3 grid, the nine slots, the cyberlink contract between them — is specified by the agent that owns it: [[cy/specs/chroma|cy/specs/chroma]] (moved there 2026-10-07; a full-screen terminal is as much a chroma as a window). this directory keeps what prysm adds: how each slot is *painted* — overlay cameras, renderer plugging, the per-slot visual contracts below.
+
+## slot names
+
+cy names the slots by their organs; the painter's older names survive in these per-slot pages and in `cyb/crates/cyb/src/chroma.rs` until the code phase of the anatomy renames them:
+
+| cy organ (canonical) | painter's page | position |
+|---|---|---|
+| now | [space](space.md) | top-left |
+| voice | [ad](ad.md) | top-centre |
+| name | [ava](ava.md) | top-right |
+| sense | [sense](sense.md) | mid-left |
+| spacetime | [spacetime](spacetime.md) | centre |
+| sigma | [sigma](sigma.md) | mid-right |
+| memory | [brain](brain.md) | bottom-left |
+| com | [com](com.md) | bottom-centre |
+| time | [time](time.md) | bottom-right |
+
+[grid](grid.md) is the layout engine; [settings](settings.md) is the configuration surface.
 
 ## layout
 

@@ -13,7 +13,7 @@ Layouts and ECS records below specify intended behavior, not shipped coverage.
 
 ## Ownership
 
-[Time](../../../cyb/parts/time.md) composes Log ← Now → Plan: retained history,
+[Time](../../../cy/specs/time.md) composes Log ← Now → Plan: retained history,
 present context and standing/deferred intent in one screen. Cybergraph/BBG stores
 authoritative history. Log renders that history; neither this widget nor a
 session-local event list is another ledger.
