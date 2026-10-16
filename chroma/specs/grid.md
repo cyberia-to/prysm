@@ -2,11 +2,14 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 screen layout grid for [[prysm]]
 
-the coordinate system of [[cyb]]. CSS Grid. every element has a grid address. renders in Leptos (Rust → WASM), styled with CSS
+The proposed coordinate system of [[cyb]]. Every element has a grid address. The CSS below is a web mapping of the layout, not the native runtime contract: Cyb's root runtime is Bevy, and WebView is reserved for Portal web content. Chroma slots are views of the [21 organs](../../../cyb/anatomy.md), not new organs.
 
 ## viewports
 
@@ -60,16 +63,16 @@ the coordinate system of [[cyb]]. CSS Grid. every element has a grid address. re
 
 | zone | grid-area | size | description |
 |------|-----------|------|-------------|
-| context | context | 200 × 48 | the subject. what is being viewed. tap → slide-out menu context |
+| context | context | 200 × 48 | Now's displayed context. what is being viewed; independent of the acting attachment. tap → context menu |
 | adviser | adviser | 1fr × 48 (fills remaining width) | voice of [[cyb]]. highlights danger, shows errors, gives suggestions. hidden when empty |
-| avatar | avatar | 200 × 48 | the object. active [[neuron]] identity. tap → slide-out menu avatar |
+| avatar | avatar | 200 × 48 | the robot's visualization. attachment selection belongs to Sigma, not this image |
 | space | space | spans all 3 columns × 1fr (fills remaining height) | everything exists in space. [[particle]] views, profiles, search, transactions. scrollable |
 | S (sense) | — (position: fixed) | 32 × 48 | button-widget on left edge, vertical center. unread count. tap → navigates to [[cyb/sense]] page |
 | Σ (sigma) | — (position: fixed) | 32 × 48 | button-widget on right edge, vertical center. current balance. tap → navigates to [[cyb/sigma]] page |
-| stars | bottom-l (top) | 200 × auto | pinned items. configurable by avatar |
+| stars | bottom-l (top) | 200 × auto | pinned typed destinations, configured through the robot's settings/Soul |
 | graph | bottom-l (bottom) | 200 × auto | navigation minimap. position in [[cybergraph]] |
-| commander | commander | 1fr × 48 (fills remaining width) | [[prysm/mind]]. input field with buttons inside. search, command, sign |
-| time | bottom-r | 200 × auto | action timeline. newest bottom, oldest top. machine time counter |
+| commander | commander | 1fr × 48 (fills remaining width) | [Com](com.md). input field with buttons inside; emits search or authorized action intent |
+| time | bottom-r | 200 × auto | Log projection with a link to Time (Log ← Now → Plan); timestamps retain their source |
 
 ### S and Σ positioning
 
@@ -164,11 +167,11 @@ the coordinate system of [[cyb]]. CSS Grid. every element has a grid address. re
 | avatar | 32 × 32 | icon only |
 | space | spans all 3 columns, 16px padding | same logic, tighter padding |
 | S, Σ | 32 × 32, fixed on edges | same |
-| stars | auto × 48, max 4 pinned cell icons | inline in bottom row, no graph |
+| stars | auto × 48, max 4 pinned destination icons | inline in bottom row, no graph |
 | commander | 1fr × 48 | shares bottom row with stars and time |
 | time | auto × 48 | compressed column |
 | graph | inside menu context | not visible on main grid |
-| menus | slide from edges, 280px wide | narrower than desktop 200px |
+| menus | slide from edges, 280px wide | wider than desktop 200px |
 
 ## 8px grid
 

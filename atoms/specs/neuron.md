@@ -6,7 +6,7 @@ crystal-domain: cyber
 
 identity and agency atom in [[prysm]]
 
-the primitive for any actor in the [[cybergraph]] — human, AI, sensor, autonomous agent. renders as a bech32 address. a leaf in the element tree (leaf type: address). the neuron atom is pure identity — it knows the address and nothing else. molecules (neuron-card, avatar, address) compose it into richer displays
+the primitive for any actor in the [[cybergraph]] — human, AI, sensor, autonomous agent. renders a domain-qualified public subject reference. a leaf in the element tree (leaf type: address). the neuron atom is pure identity — it knows the address and nothing else. molecules (neuron-card, avatar, address) compose it into richer displays
 
 ## protocol role
 
@@ -18,7 +18,7 @@ all values in spatial quanta $g$
 
 | parameter | sizing type | values | default |
 |-----------|-----------|--------|---------|
-| id | — | bech32 address string | required |
+| id | — | SubjectRef plus optional display profile | required |
 | format | — | full, short, hash-only | short |
 | verified | — | bool | false |
 
@@ -83,3 +83,12 @@ in the 3D extension (§11 of [[prysm/layout]]):
   - `NeuronVerified { bool }` — appends verified ion when true
   - `TextColor { color }` — from palette, #d7d7d7 default
 - System: neuron participates in `OccupySystem` as a leaf — computes size from formatted address string; falls back to shorter format if width exceeds $c_w$
+
+## Identity boundary
+
+The native ID remains H(compressed pubkey), provided by the owning identity
+profile. A foreign address remains exact bytes qualified by its domain; a Bech32
+label is presentation and is never hashed into a native ID. `verified` requires
+a separately supplied verification result for the precise claim/network; text
+parsing or an identicon is not evidence of control. The atom needs only
+`neuron-model` without its records feature, never keys or the execution engine.

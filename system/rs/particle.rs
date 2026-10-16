@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use tape::Chunk;
+use tade::Chunk;
 
 /// A self-contained visual particle. Owns identity (sigil + render),
 /// wire decoding, and Bevy spawning. The error is red intrinsically —

@@ -2,15 +2,18 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 section navigation molecule in [[prysm]]
 
-a horizontal row of selectable items. one active, the rest idle. switches between sections within an [[cell]]. glass + ion (per tab) + saber (active underline)
+a horizontal row of selectable items. one active, the rest idle. switches between sections within a view. glass + ion (per tab) + saber (active underline)
 
 ## protocol role
 
-molecule in $\mathcal{T}$. lives inside space zone, within [[cell]] content
+molecule in $\mathcal{T}$. lives inside space zone, within view content
 
 ## sizing
 

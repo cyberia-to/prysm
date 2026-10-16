@@ -76,15 +76,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "acpu"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "81089272e2a248781b1e2c38ad7247a98bea63a602c0a445dc63e955b2035375"
-dependencies = [
- "unimem",
-]
-
-[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -345,17 +336,6 @@ name = "base64"
 version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
-
-[[package]]
-name = "bbg"
-version = "0.1.0"
-dependencies = [
- "cyb-nebu",
- "cyber-hemera",
- "cyber-lens",
- "nox",
- "zheng",
-]
 
 [[package]]
 name = "bevy"
@@ -2175,140 +2155,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f27ae1dd37df86211c42e150270f82743308803d90a6f6e6651cd730d5e1732f"
 
 [[package]]
-name = "cyb-core"
-version = "0.1.0"
-dependencies = [
- "cybergraph",
-]
-
-[[package]]
-name = "cyb-genies"
-version = "0.1.0"
-dependencies = [
- "strata-core",
- "strata-ext",
- "strata-proof",
-]
-
-[[package]]
-name = "cyb-jali"
-version = "0.1.0"
-dependencies = [
- "cyb-nebu",
- "strata-core",
-]
-
-[[package]]
-name = "cyb-kuro"
-version = "0.1.0"
-dependencies = [
- "strata-core",
- "strata-ext",
- "strata-proof",
-]
-
-[[package]]
-name = "cyb-lens-assayer"
-version = "0.1.0"
-dependencies = [
- "cyb-lens-brakedown",
- "cyb-lens-core",
- "cyb-nebu",
- "cyb-trop",
-]
-
-[[package]]
-name = "cyb-lens-binius"
-version = "0.1.0"
-dependencies = [
- "cyb-kuro",
- "cyb-lens-core",
- "cyber-hemera",
-]
-
-[[package]]
-name = "cyb-lens-brakedown"
-version = "0.1.0"
-dependencies = [
- "cyb-lens-core",
- "cyb-nebu",
- "cyber-hemera",
-]
-
-[[package]]
-name = "cyb-lens-core"
-version = "0.1.0"
-dependencies = [
- "cyb-nebu",
- "cyber-hemera",
- "strata-core",
- "strata-proof",
-]
-
-[[package]]
-name = "cyb-lens-ikat"
-version = "0.1.0"
-dependencies = [
- "cyb-jali",
- "cyb-lens-brakedown",
- "cyb-lens-core",
- "cyb-nebu",
-]
-
-[[package]]
-name = "cyb-lens-porphyry"
-version = "0.1.0"
-dependencies = [
- "cyb-genies",
- "cyb-lens-core",
- "cyber-hemera",
-]
-
-[[package]]
-name = "cyb-nebu"
-version = "0.1.0"
-dependencies = [
- "acpu",
- "strata-compute",
- "strata-core",
- "strata-ext",
- "strata-proof",
-]
-
-[[package]]
-name = "cyb-trop"
-version = "0.1.0"
-dependencies = [
- "strata-core",
-]
-
-[[package]]
-name = "cyber-hemera"
-version = "0.3.0"
-
-[[package]]
-name = "cyber-lens"
-version = "0.1.0"
-dependencies = [
- "cyb-lens-assayer",
- "cyb-lens-binius",
- "cyb-lens-brakedown",
- "cyb-lens-core",
- "cyb-lens-ikat",
- "cyb-lens-porphyry",
-]
-
-[[package]]
-name = "cybergraph"
-version = "0.1.0"
-dependencies = [
- "bbg",
- "cyb-nebu",
- "cyber-hemera",
- "zheng",
-]
-
-[[package]]
 name = "dasp_sample"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3410,12 +3256,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mutants"
-version = "0.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc0287524726960e07b119cebd01678f852f147742ae0d925e6a520dca956126"
-
-[[package]]
 name = "naga"
 version = "27.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3513,6 +3353,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "neuron-id"
+version = "0.1.0"
+
+[[package]]
+name = "neuron-model"
+version = "0.1.0"
+dependencies = [
+ "neuron-id",
+]
+
+[[package]]
 name = "nix"
 version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3551,16 +3402,6 @@ name = "nonmax"
 version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "610a5acd306ec67f907abe5567859a3c693fb9886eb1f012ab8f2a47bef3db51"
-
-[[package]]
-name = "nox"
-version = "0.1.0"
-dependencies = [
- "cyb-lens-brakedown",
- "cyb-lens-core",
- "cyb-nebu",
- "cyber-hemera",
-]
 
 [[package]]
 name = "ntapi"
@@ -4149,8 +3990,8 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "crossbeam-channel",
- "cyb-core",
- "tape",
+ "neuron-model",
+ "tade",
 ]
 
 [[package]]
@@ -4680,31 +4521,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
-name = "strata-compute"
-version = "0.1.0"
-dependencies = [
- "strata-core",
-]
-
-[[package]]
-name = "strata-core"
-version = "0.1.0"
-
-[[package]]
-name = "strata-ext"
-version = "0.1.0"
-dependencies = [
- "strata-core",
-]
-
-[[package]]
-name = "strata-proof"
-version = "0.1.0"
-dependencies = [
- "strata-core",
-]
-
-[[package]]
 name = "strict-num"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4762,6 +4578,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "tade"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+]
+
+[[package]]
 name = "taffy"
 version = "0.9.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4771,13 +4594,6 @@ dependencies = [
  "grid",
  "serde",
  "slotmap",
-]
-
-[[package]]
-name = "tape"
-version = "0.1.0"
-dependencies = [
- "bytes",
 ]
 
 [[package]]
@@ -5081,16 +4897,6 @@ name = "unicode-xid"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
-
-[[package]]
-name = "unimem"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a91794fe345844d09b134c55fde134bc9d51593964b906dde2f667162e49918d"
-dependencies = [
- "crossbeam-queue",
- "mutants",
-]
 
 [[package]]
 name = "uuid"
@@ -6265,16 +6071,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "zheng"
-version = "0.1.0"
-dependencies = [
- "cyb-nebu",
- "cyber-hemera",
- "cyber-lens",
- "nox",
 ]
 
 [[package]]

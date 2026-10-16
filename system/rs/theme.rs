@@ -22,6 +22,19 @@ pub const BODY:    f32 = 16.0;
 pub const CAPTION: f32 = 14.0;
 pub const MICRO:   f32 = 12.0;
 
-pub const DARK_BASE:     Color = Color::srgba(0.06, 0.06, 0.08, 1.0);
+/// The widest a column of text grows before the eye stops tracking line to
+/// line. It is a ceiling, not a width: a viewport narrower than this gets the
+/// whole of itself, because a phone has no width to give away to margins.
+pub const MEASURE: f32 = 760.0;
+
+/// The one background. Every surface in every view sits on pure black — depth
+/// comes from [`BORDER`] and the glass alphas, never from a lighter fill.
+pub const DARK_BASE:     Color = Color::srgba(0.0, 0.0, 0.0, 1.0);
+/// Hairline that separates one black surface from the next.
+///
+/// Tinted, never neutral: a grey line on black reads as a grey box, and the
+/// surface stops looking black at all. This is the acid green the rest of the
+/// interface speaks, dimmed until it is just structure.
+pub const BORDER:        Color = Color::srgba(0.13, 0.92, 0.51, 0.22);
 pub const TEXT_PRIMARY:  Color = Color::srgba(0.95, 0.95, 0.96, 1.0);
 pub const TEXT_DIM:      Color = Color::srgba(0.45, 0.45, 0.50, 1.0);

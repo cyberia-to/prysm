@@ -2,7 +2,10 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 typography atom in [[prysm]]
 
@@ -116,8 +119,8 @@ text size tokens do not change between desktop and mobile. the same body($2g$) r
 in the 3D extension (§11 of [[prysm/layout]]):
 
 - text renders on a plane at the same $p_z$ as its membrane
-- text always faces the neuron (billboard orientation) — legibility requires frontal view
-- text size in quanta is constant in world space. at greater distance from neuron, text appears smaller but remains sharp
+- text always faces the viewer (billboard orientation) — legibility requires frontal view
+- text size in quanta is constant in world space. at greater distance from the viewer, text appears smaller but remains sharp
 
 ## ECS
 

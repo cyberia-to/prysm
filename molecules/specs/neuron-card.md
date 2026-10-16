@@ -2,15 +2,18 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 [[neuron]] identity card molecule in [[prysm]]
 
-the face of a [[neuron]]. shows who someone is: avatar image, address (with hash bars), [[karma]], rank. the primary way neurons recognize each other
+A display of a protocol subject: domain-qualified reference, display address, optional name/image, and sourced karma/rank. Images and names are presentation records; they neither prove key control nor merge the subject with a robot. A robot can attach several neurons, and a card may inspect any permitted subject without attaching it.
 
 ## protocol role
 
-molecule in $\mathcal{T}$. lives inside space zone content, search results, feeds, [[prysm/cyberver-cell]]
+molecule in $\mathcal{T}$. lives inside space zone content, search results, feeds, the [Cyberver view proposal](../../../aos/cyberver.md)
 
 ## sizing
 
@@ -51,7 +54,7 @@ $\mathcal{F}$:
 
 ## emotion
 
-avatar border reflects [[karma]]: green (high), white (medium), red (low). same as [[prysm/avatar]]
+The optional subject-image border reflects sourced karma under the declared network profile. It is independent of the robot's Avatar and never indicates key control or authorization. Compact folds retain the full subject/domain/network in their inspection target and accessible label.
 
 ## states
 
@@ -65,15 +68,15 @@ state transitions: $150\text{ms}$ ease
 
 ## 3D
 
-renders at membrane's $p_z$. avatar image faces neuron (billboard)
+renders at membrane's $p_z$. display image faces the viewer (billboard)
 
 ## ECS
 
 - Entity: neuron-card organelle
 - Components:
   - `Sizing { width: Fill, height: auto }`
-  - `NeuronIdentity { address, name, karma, rank, avatar_cid }`
+  - `NeuronDisplay { subject_ref, network, display_profile, name, image, karma, rank, evidence, freshness }`
   - `FoldSet { conformations }`
   - `Emotion { border_color }` — from karma
-  - `TapAction { navigate_to: neuron_profile }`
-- System: `NeuronCardSystem` reads neuron data, writes identity components
+  - `TapAction { route: Neuron(subject_ref), network }` — inspection only
+- System: `NeuronCardSystem` renders supplied subject projections; no key operation or attachment change

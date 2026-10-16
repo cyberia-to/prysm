@@ -2,15 +2,18 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 call-to-action molecule in [[prysm]]
 
-the primary interaction primitive. every action a [[neuron]] takes in [[cyb]] flows through a button. a transparent region bounded by vertical [[prysm/saber]] lines with glow radiating inward
+the primary interaction primitive. a button emits a user intent; autonomous and scheduled neuron actions need no button. a transparent region bounded by vertical [[prysm/saber]] lines with glow radiating inward
 
 ## protocol role
 
-button is a molecule in the element tree $\mathcal{T}$. its membrane is whatever zone or molecule contains it. button does not have a dedicated grid zone — it lives inside [[prysm/mind]], [[prysm/bar]], [[prysm/display]], and other molecules
+button is a molecule in the element tree $\mathcal{T}$. its membrane is whatever zone or molecule contains it. button does not have a dedicated grid zone — it lives inside [Com](../../chroma/specs/com.md), [[prysm/bar]], [[prysm/display]], and other molecules
 
 ## sizing
 
@@ -56,7 +59,7 @@ text color and saber glow carry [[emotion]] of the action:
 | caution (large transfer) | #fcf000 | #fcf000 |
 | disabled | #4b4b4d | none |
 
-a white button is safe. a red button demands attention. destructive actions are never the leftmost button
+White denotes a neutral action category, not a safety or authorization guarantee. A red button demands attention. destructive actions are never the leftmost button
 
 ## states
 
@@ -72,15 +75,15 @@ state transitions: $150\text{ms}$ ease
 
 ## placement
 
-- primary actions: inside [[prysm/mind]] (commander) — sign, send, confirm
+- primary actions: inside [Com](../../chroma/specs/com.md) (commander) — sign, send, confirm
 - secondary actions: inside [[prysm/bar]], [[prysm/display]], [[prysm/neuron-card]]
 - destructive actions: never first or leftmost — always require deliberate reach
 - on mobile ($\square_w \leq 96g$): buttons stretch to fill when inside commander
-- composition of multiple buttons (side by side with shared sabers) is cell-level — not defined here
+- composition of multiple buttons (side by side with shared sabers) is view-level — not defined here
 
 ## 3D
 
-button renders at the same $p_z$ as its membrane. in 3D, button sabers glow in the xy-plane. button faces the neuron (billboard)
+button renders at the same $p_z$ as its membrane. in 3D, button sabers glow in the xy-plane. button faces the viewer (billboard)
 
 ## ECS
 
@@ -93,4 +96,4 @@ button renders at the same $p_z$ as its membrane. in 3D, button sabers glow in t
   - `Emotion { color }` — determines text + saber glow
   - `FoldSet { conformations }`
   - `TapAction { callback }`
-- System: `ButtonSystem` reads tap events, executes `TapAction`, manages state transitions
+- System: `ButtonSystem` reads tap events, emits typed `TapAction` intent and manages visual transitions. The host captures subject/network/payload and checks Ward/Vault policy before effects; a callback cannot inherit authority from button appearance

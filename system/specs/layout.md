@@ -2,8 +2,11 @@
 tags: prysm, cyb, article, core
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 crystal-size: deep
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 # prysm layout protocol
 
@@ -13,17 +16,17 @@ a formal spatial composition system for the interface of [[superintelligence]]
 
 ## 0. abstract
 
-this paper defines the first layout composition algebra for user interfaces. the protocol is a pure function: element tree × viewport → exact coordinates for every element. three axioms generate the entire system: a membrane-organelle protocol ($\Pi$: constrain → occupy → place), three sizing primitives ($\Phi$: fix, fill, scale — the three relations between part and whole), and three container topologies ($\mathcal{K}$: stack, grid, layer — 1D chain, 2D lattice, depth). all sizes are expressed in quanta of a spatial quantum $g = 8$, derived from visual acuity, Fitts's law, and quantum alignment. the protocol is renderer-independent, deterministic, and completes in $\mathcal{O}(n)$ time
+This paper proposes a layout composition algebra for user interfaces. the protocol is a pure function: element tree × viewport → exact coordinates for every element. three axioms generate the entire system: a membrane-organelle protocol ($\Pi$: constrain → occupy → place), three sizing primitives ($\Phi$: fix, fill, scale — the three relations between part and whole), and three container topologies ($\mathcal{K}$: stack, grid, layer — 1D chain, 2D lattice, depth). all sizes are expressed in quanta of a spatial quantum $g = 8$, derived from visual acuity, Fitts's law, and quantum alignment. the protocol is renderer-independent, deterministic, and completes in $\mathcal{O}(n)$ time
 
-14 theorems with proofs: linear time (T1), determinism (T2), sizing irreducibility (T3) and completeness (T4), container completeness (T5), optimal fold derivation (T6), urgency-gravity composition (T7), multimodal generalization (T8), branching fold via Pareto front (T9), rewrite termination (T10), confluence (T11), algebra completeness (T12), amortized $\mathcal{O}(1)$ fold selection (T13), multi-node decomposition (T14). 10 invariants. all theorems formalized in Lean 4 without sorry. the protocol generalizes to any bounded measurable domain: audio, haptic, neural (T8)
+14 theorems with proofs: linear time (T1), determinism (T2), sizing irreducibility (T3) and completeness (T4), container completeness (T5), optimal fold derivation (T6), urgency-gravity composition (T7), multimodal generalization (T8), branching fold via Pareto front (T9), rewrite termination (T10), confluence (T11), algebra completeness (T12), amortized $\mathcal{O}(1)$ fold selection (T13), multi-node decomposition (T14). 10 invariants. The theorem statements and proof sketches are research candidates, not a claim of completed machine verification. the protocol generalizes to any bounded measurable domain: audio, haptic, neural (T8)
 
-the protocol is validated by [[cyb]] at cyb.ai. companion specifications define [[prysm/emotion]], [[prysm/interaction]], and [[prysm/responsive]] adaptation. no published layout composition algebra for UI existed before this paper
+Companion specifications define [[prysm/emotion]], [[prysm/interaction]] and [[prysm/responsive]] adaptation. Acceptance requires the evidence in §16 and §19; examples of Cyb layouts do not establish renderer coverage or proof completion.
 
 ---
 
 ## 1. the problem
 
-the [[cybergraph]] is a directed authenticated multigraph where [[neurons]] — humans, AIs, sensors, agents, autonomous systems — link [[particles]] into [[knowledge]]. the structural record is append-only. the active computation evolves through the [[tri-kernel]]. this graph will outlive every rendering technology that exists today
+the [[cybergraph]] is a directed authenticated multigraph where [[neurons]] are protocol subjects that author links between [[particles]]. Humans, robots, programs and sensory devices can contribute through explicitly attributed subjects; each UI element or device is not automatically a neuron. the structural record is append-only. the active computation evolves through the [[tri-kernel]]. this graph will outlive every rendering technology that exists today
 
 this graph needs a spatial protocol with four properties:
 
@@ -32,7 +35,7 @@ this graph needs a spatial protocol with four properties:
 - linear time — layout completes in $\mathcal{O}(n)$ where $n$ is the organelle count. provably, not by claim
 - formally specified — every rule has a formula. every property has a proof or is honestly marked as conjecture
 
-no published layout composition algebra exists for UI. this paper defines one from three axioms
+This paper explores a layout algebra from three axioms.
 
 ---
 
@@ -87,8 +90,8 @@ $g$ is derived from three physical constraints (§8): visual acuity at arm's len
 | parameter | value | source |
 |-----------|-------|--------|
 | spatial quantum | $g = 8$ | derived: visual acuity + Fitts's law + quantum alignment (§8) |
-| desktop viewport | $\square = (240g, 135g)$ | convention: neuron device distribution |
-| mobile viewport | $\square = (49g, 106g)$ | convention: neuron device distribution |
+| desktop viewport | $\square = (240g, 135g)$ | convention: reference display dimensions |
+| mobile viewport | $\square = (49g, 106g)$ | convention: reference display dimensions |
 | structural breakpoint | $\square_w = 96g$ | convention: fold threshold analysis |
 | side column | fix($25g$) | convention: min width fitting context/avatar content |
 | commander height | fix($6g$) | derived: min touch target ($4g$) rounded up to comfortable ($6g$) |
@@ -154,7 +157,7 @@ $s_0$ — previous state (position + size). $s_1$ — target state (new layout o
 | $T$ (duration) | $150\text{ms}$ | below perception threshold for causality (200ms) |
 | $\alpha$ | ease (cubic-bezier 0.25, 0.1, 0.25, 1.0) | matches natural deceleration |
 
-all motion in prysm uses the same $T$ and $\alpha$. one duration, one curve. uniformity is legibility — the neuron learns one rhythm
+all motion in prysm uses the same $T$ and $\alpha$. one duration, one curve. uniformity is legibility — the viewer learns one rhythm
 
 motion applies only when $s_0 \neq s_1$ for the same entity $e$. motion does not affect layout computation. the protocol always outputs $s_1$ (target). the renderer interpolates. this preserves I2 (single-pass) and I1 (determinism)
 
@@ -170,10 +173,10 @@ every organelle carries an optional semantic role:
 
 | role | meaning | examples |
 |------|---------|----------|
-| navigation | moves the neuron to a different location | commander input, menu items, tabs, stars |
+| navigation | changes the inspected destination | commander input, menu items, tabs, stars |
 | action | triggers a state change | buttons, toggles |
 | display | presents data (read-only) | counters, address, pill, content |
-| input | accepts data from the neuron | text input, slider, token amount |
+| input | accepts user input | text input, slider, token amount |
 | landmark | structural anchor for orientation | context, avatar, commander, adviser |
 | group | semantically related organelles | validator list, token table, filter bar |
 
@@ -298,7 +301,7 @@ Proof. the Pareto front at each width contains all non-dominated importance vect
 
 Complexity. step 1 generates $2^m$ subsets (dominated by step 3). for fixed $w_{min}$, the Pareto front of $n$ points in $\mathbb{R}^d$ is computable in $\mathcal{O}(n \log^{d-2} n)$ for $d \geq 2$ (Kung et al., 1975). the total number of Pareto-optimal conformations is $\mathcal{O}(m^{d-1})$ per width class (upper bound on Pareto front size in $\mathbb{R}^d$). for $d = 1$ (scalar importance): the front is a single point — Theorem 6 recovers. for $d = 2$: at most $\mathcal{O}(m)$ Pareto-optimal conformations per width, $\mathcal{O}(m^2)$ total. specification-time computation, not runtime
 
-Fold selection with branching. at runtime, the neuron or context determines a weight vector $\vec{w} \in \mathbb{R}^d$ (how much to value each importance dimension). the fold function becomes:
+Fold selection with branching. at runtime, user configuration or display context determines a weight vector $\vec{w} \in \mathbb{R}^d$ (how much to value each importance dimension). the fold function becomes:
 
 $$l^* = \arg\max_{l \in \mathcal{F},\; w_{min}(l) \leq c_w} \vec{w} \cdot \vec{\phi^*}(l)$$
 
@@ -574,7 +577,7 @@ evaluating:
 
 $g = 7$: meets legibility and touch but fails quantum alignment (does not divide any standard width cleanly)
 
-$g = 8$: meets all three constraints. smallest $g$ that satisfies touch target AND divides the reference desktop width. mobile waste (max 7px) is absorbed by the fill column — invisible to the neuron
+$g = 8$: meets all three constraints. smallest $g$ that satisfies touch target AND divides the reference desktop width. mobile waste (max 7px) is absorbed by the fill column — invisible to the viewer
 
 ### 8.3 the derivation
 
@@ -584,7 +587,7 @@ derived from: visual acuity at arm's length (lower bound 3.6), Fitts's law touch
 
 $g$ is no longer convention. it is the unique solution to a constrained optimization over three physical parameters. changing any input (viewing distance, DPI standard, minimum touch target) changes $g^*$ — but the derivation method is permanent
 
-ECS: `SpatialQuantum { g: u32 }` — set once at application init. currently hardcoded to 8. the derivation above justifies this value; future devices with different DPI/distance may compute $g^*$ dynamically
+Proposed ECS: `SpatialQuantum { g: u32 }` — set once at application init, with reference value 8. the derivation above justifies this value; future devices with different DPI/distance may compute $g^*$ dynamically
 
 ---
 
@@ -592,7 +595,7 @@ ECS: `SpatialQuantum { g: u32 }` — set once at application init. currently har
 
 in 2D, layout has two participants: membrane and organelle. the membrane constrains, the organelle occupies, the membrane places. depth ($z$) is an integer ordering assigned by urgency $\mathcal{U}$
 
-in 3D, depth becomes a real spatial dimension and a third participant enters the protocol: the [[cybergraph]] itself. what is important must appear close to the [[neuron]]. what is peripheral must recede. importance is not decided by membrane or organelle — it is computed by the [[tri-kernel]] as [[focus]] ($\phi^*$) and [[gravity]]
+in 3D, depth becomes a real spatial dimension and a third participant enters the protocol: the [[cybergraph]] itself. what is important must appear close to the viewer. what is peripheral must recede. importance is not decided by membrane or organelle — it is computed by the [[tri-kernel]] as [[focus]] ($\phi^*$) and [[gravity]]
 
 ### 9.1 the gravity phase
 
@@ -611,7 +614,7 @@ the gravity function:
 
 $$p_z(e) = d_{max} \cdot (1 - \phi^*(e))$$
 
-$\phi^*(e)$ — the focus of organelle $e$ in the [[cybergraph]], computed by the [[tri-kernel]]. $d_{max}$ — maximum depth of the 3D space (convention). when $\phi^* = 1$ (maximum focus): $p_z = 0$ — directly in front of the neuron. when $\phi^* = 0$ (no focus): $p_z = d_{max}$ — at the far edge of the space
+$\phi^*(e)$ — the focus of organelle $e$ in the [[cybergraph]], computed by the [[tri-kernel]]. $d_{max}$ — maximum depth of the 3D space (convention). when $\phi^* = 1$ (maximum focus): $p_z = 0$ — directly in front of the viewer. when $\phi^* = 0$ (no focus): $p_z = d_{max}$ — at the far edge of the space
 
 this mirrors physical gravity: massive objects (high focus) attract the observer's attention. the [[cybergraph]] is the gravitational field. focus is mass. distance is inversely proportional to importance
 
@@ -623,7 +626,7 @@ this mirrors physical gravity: massive objects (high focus) attract the observer
 | organelle | occupies space, reports size | occupies space, reports size (unchanged) |
 | [[cybergraph]] | not involved | computes $p_z$ via gravity. third participant |
 
-in 2D, the protocol is a dialogue between membrane and organelle. in 3D, the [[cybergraph]] speaks — it determines which knowledge is near and which is far. this is not a design choice. it follows from the physics of the [[cybergraph]]: the [[tri-kernel]] computes focus continuously, and focus determines spatial proximity to the neuron
+in 2D, the protocol is a dialogue between membrane and organelle. in 3D, the [[cybergraph]] speaks — it determines which knowledge is near and which is far. This is a proposed rendering policy: when a UI element explicitly projects a graph particle, a sourced tri-kernel focus value can influence its distance from the viewer. Other UI elements use declared layout defaults. A layout entity does not automatically become a particle or a signing neuron
 
 ### 9.3 sizing and containers in 3D
 
@@ -842,7 +845,7 @@ the determinism proof (Theorem 2) holds: structural induction on $\mathcal{T}$ u
 
 the tradeoff is identical. in any domain, the protocol cannot express content-dependent membrane sizing (would require two passes). organelles that exceed constraints use the domain's equivalent of scroll: audio → fade/truncate, haptic → attenuate
 
-the spatial domain is not special. it is the first domain implemented because visual perception dominates human-computer interaction. but $\Pi$ is a resource allocation protocol over trees. the "resource" can be screen area, time, frequency, or any bounded measurable quantity. ∎
+The spatial domain is the initial design target; extensions require their own implementation and validation. but $\Pi$ is a resource allocation protocol over trees. the "resource" can be screen area, time, frequency, or any bounded measurable quantity. ∎
 
 | domain | constraint $c$ | size $s$ | position $p$ | $\Phi$ primitives | $\mathcal{K}$ containers |
 |--------|---------------|----------|-------------|-------------------|-------------------------|
@@ -854,7 +857,7 @@ the spatial domain is not special. it is the first domain implemented because vi
 
 ## 12. the [[cyb]] layout
 
-root tree $\mathcal{T}$ for [[cyb]], demonstrating the protocol on a concrete interface
+Proposed root tree $\mathcal{T}$ for [[cyb]]. Slots project the [21 organs](../../../cyb/anatomy.md); context projects Now, Avatar visualizes the robot, Com emits intent, Sigma manages assets/attachments, and Time composes Log ← Now → Plan. Widgets and ECS entities do not add organs or signing identities.
 
 ### 12.1 desktop ($\square = (240g, 135g)$)
 
@@ -862,9 +865,9 @@ grid: columns fix($25g$) fill fix($25g$), rows fix($6g$) fill auto. named areas:
 
 | organelle | type | sizing | $z$ | $\mathcal{U}$ | ECS | role |
 |-----------|------|--------|-----|------|-----|------|
-| context | frame | fix($25g$) × fix($6g$) | 10 | persistent | `GridArea, Sizing, FoldSet, Trigger::Tap` | subject being viewed |
+| context | frame | fix($25g$) × fix($6g$) | 10 | persistent | `GridArea, Sizing, FoldSet, Trigger::Tap` | Now's inspected context |
 | adviser | guidance | fill × fix($6g$) | 40 | guiding | `GridArea, Sizing, Visibility` | voice of [[cyb]] |
-| avatar | frame | fix($25g$) × fix($6g$) | 10 | persistent | `GridArea, Sizing, FoldSet, Trigger::Tap` | active [[neuron]] identity |
+| avatar | frame | fix($25g$) × fix($6g$) | 10 | persistent | `GridArea, Sizing, FoldSet, Trigger::Tap` | robot visualization; no acting-subject selection |
 | space | ambient | fill × fill, scroll | 0 | ambient | `GridArea, Overflow::Scroll` | where [[particles]] render |
 | S (sense) | frame | fix($4g$) × fix($6g$), left center | 10 | persistent | `FixedEdge::Left, Sizing` | [[cyb/sense]]: unread count |
 | Σ (sigma) | frame | fix($4g$) × fix($6g$), right center | 10 | persistent | `FixedEdge::Right, Sizing` | [[cyb/sigma]]: balance |
@@ -873,7 +876,7 @@ grid: columns fix($25g$) fill fix($25g$), rows fix($6g$) fill auto. named areas:
 | commander | active | fill × fix($6g$) | 20 | active | `GridArea, Sizing` | input + buttons |
 | time | frame | fix($25g$) × auto | 10 | persistent | `GridArea, Sizing` | action timeline |
 | menu context | overlay | fix($25g$) × fill($\square_h$) | 30 | interrupting | `SlideOverlay::Left, Trigger::Tap` | settings |
-| menu avatar | overlay | fix($25g$) × fill($\square_h$) | 30 | interrupting | `SlideOverlay::Right, Trigger::Tap` | accounts |
+| menu avatar | overlay | fix($25g$) × fill($\square_h$) | 30 | interrupting | `SlideOverlay::Right, Trigger::Tap` | robot menu; explicit link to Sigma attachment management |
 
 ### 12.2 mobile ($\square = (49g, 106g)$, $\square_w \leq 96g$)
 
@@ -993,7 +996,7 @@ FilterSortSystem ──► ConstrainSystem ──► OccupySystem ──► Fold
                                                              │
                                                              ▼
                                                   EmotionPropagateSystem
-                                                    (cell → molecule → atom)
+                                                    (view → molecule → atom)
                                                              │
                                                ┌─────────────┼─────────────┐
                                                ▼             ▼             ▼
@@ -1033,17 +1036,17 @@ the layout function outputs $\{(e_i, p_{x_i}, p_{y_i}, s_{w_i}, s_{h_i}, z_i)\}$
 
 ## 16. validation
 
-the protocol is validated by [[cyb]] at cyb.ai — the live interface to the [[cybergraph]]
+Acceptance requires reproducible tests against declared renderer versions and hardware. Record observed results in `prysm/audit/`, separately from these requirements.
 
-every screen in [[cyb]] is an element tree computed by this protocol. invariants tested against the running system:
+For each renderer claiming conformance, test these invariants against the running implementation:
 
 - I1 (determinism): same page load → same coordinates. screenshot comparison across sessions
-- I2 (single-pass): layout profiler confirms no re-measurement
-- I3 (linear time): layout time measured across pages with 10 to 10,000 organelles. linear relationship confirmed
+- I2 (single-pass): layout profiler must show no re-measurement
+- I3 (linear time): layout time measured across pages with 10 to 10,000 organelles. check scaling under declared fold-set and shaping bounds
 - I4 (constraint respect): automated bounds checking — no organelle overflows its membrane
-- I5 (quantum alignment): inspector confirms $g$-alignment on non-text organelles
+- I5 (quantum alignment): inspector must check $g$-alignment on non-text organelles
 - I6 (z monotonicity): modal above adviser above commander above space
-- I7 (fold legibility): every molecule tested at $s_{min}$ on mobile viewport
+- I7 (fold legibility): test every molecule at $s_{min}$ on mobile viewport
 - I8 (renderer independence): same coordinates across Leptos and Bevy UI
 - I9 (semantic completeness): every interactive organelle has a non-empty label. CI check against component catalog
 
@@ -1061,7 +1064,7 @@ from Theorem 1: $t_{layout} = k \cdot n \cdot f_{max}$. from Theorem 13: amortiz
 
 at $n > 10{,}000$: viewport culling reduces visible organelles. only organelles within the visible scroll region + one screen-height of buffer participate in layout. the protocol's single-pass structure means culled subtrees are skipped entirely (their constraint is computed but they are not placed)
 
-[[cyb]] is the proof. the paper is the specification
+This paper defines intended constraints. A working screen alone does not prove these invariants.
 
 ---
 
@@ -1096,13 +1099,13 @@ what would invalidate it. a fundamentally non-rectangular display would require 
 | cellular automata | 1970 | computational completeness of simple local rules on grids. prysm's container tree is a tree cellular automaton | — |
 | biological cell | — | membrane-organelle relationship. the physical metaphor: membrane constrains, organelle occupies. 3.5 billion years of validation | — |
 
-gap this paper addresses: no published layout composition algebra for UI existed. every system above is either a specification (CSS), an implementation (Flutter, Taffy), or solves a different problem (TeX, CuTe, VLSI). prysm fills this gap: three axioms, fourteen theorems with proofs, biological metaphor, gravity-based 3D, multimodal generalization, Lean 4 formalization
+This paper explores a common algebra for spatial composition, fold behavior and renderer mappings. The related-work table is research context, not evidence of novelty or proof completion.
 
 ---
 
-## 19. resolved and open problems
+## 19. Research and verification obligations
 
-### resolved in this paper
+### Candidate results
 
 | # | problem | resolution |
 |---|---------|-----------|
@@ -1117,11 +1120,11 @@ gap this paper addresses: no published layout composition algebra for UI existed
 | 9 | $\mathcal{O}(1)$ fold selection | Theorem 13 (§10.7) |
 | 10 | multi-node decomposition | Theorem 14 (§19) |
 | 11 | optimal $g$ | §8: derived from visual acuity + Fitts's law + quantum alignment |
-| 12 | Lean formalization | `lean/Prysm/Layout/` — 7 files, 14 theorem statements |
+| 12 | machine verification | proposed module structure below; checked artifacts required |
 
 ### formal verification roadmap
 
-the 14 theorems are semi-formal. a machine-checked proof in Lean 4 provides the structural foundation. the Lean code exists at `lean/Prysm/Layout/`. structure:
+The 14 theorem statements and arguments are semi-formal research material. Before treating them as contracts, declare their exact domains and check the proofs. In particular, variable-width fold optimality, fill-dependent rewrites and general completeness need independent review; a prose proof does not settle these assumptions. Proposed Lean module structure:
 
 ```
 Prysm/
@@ -1139,7 +1142,7 @@ key formalization challenge: Theorems 1-2 require modeling the DFS traversal as 
 
 estimated effort: ~2000 lines of Lean for the core theorems. the proofs are constructive — no axiom of choice required
 
-the Lean formalization exists at `lean/Prysm/Layout/`:
+Proposed verification responsibilities:
 - `Protocol.lean` — element tree, layout function, Theorems 1-2
 - `Sizing.lean` — Φ primitives, Theorems 3-4
 - `Container.lean` — coordinate-collection construction, Theorem 5
@@ -1148,7 +1151,7 @@ the Lean formalization exists at `lean/Prysm/Layout/`:
 - `Multimodal.lean` — LayoutDomain typeclass, Theorem 8
 - `Algebra.lean` — rewrite system, Theorems 10-14
 
-status: structural proofs complete (types, functions, theorem statements). arithmetic `sorry` markers remain where Nat division lemmas are needed — these are decidable and can be discharged by `omega` or `Mathlib` tactics. no fundamental gaps
+Completion criteria: retain exact checked sources, compiler/library revisions and command logs in an audit; distinguish proven statements from axioms and unfinished proofs. No claim that all gaps are merely arithmetic is part of this specification.
 
 ### multi-node decomposition
 
@@ -1180,6 +1183,6 @@ this paper defines spatial placement: how elements are sized and positioned. it 
 companion specifications:
 - [[prysm/emotion]] — the emotion function: how protocol state maps to color
 - [[prysm/interaction]] — the interaction protocol: how input events produce state transitions
-- [[prysm]] component catalog — atoms, molecules, cells, fold sets, visual parameters
+- [[prysm]] component catalog — atoms, molecules, views, fold sets, visual parameters
 
 this paper does not define what elements exist, how they look, or how they behave. those definitions live in the companion specifications above
