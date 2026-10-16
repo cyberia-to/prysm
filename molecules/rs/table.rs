@@ -10,7 +10,7 @@ pub struct TableRoot;
 pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
     let rows = decode_nested(&chunk.payload);
     let mut headers: Vec<String> = Vec::new();
-    let mut data_rows: Vec<(Vec<String>, Option<String>)> = Vec::new();
+    let mut data_rows: Vec<(Vec<String>, Vec<String>)> = Vec::new();
 
     for row in &rows {
         if row.sigil == sigil::FAS && row.render == render::STRUCT {
@@ -24,16 +24,16 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
                     .iter()
                     .map(|c| String::from_utf8_lossy(&c.payload).into_owned())
                     .collect();
-                let (visible, target) = split_target(cells);
-                data_rows.push((visible, target));
+                let (visible, targets) = split_targets(cells);
+                data_rows.push((visible, targets));
             }
         } else if row.sigil == sigil::COL && row.render == render::STRUCT {
             let cells: Vec<String> = decode_nested(&row.payload)
                 .iter()
                 .map(|c| String::from_utf8_lossy(&c.payload).into_owned())
                 .collect();
-            let (visible, target) = split_target(cells);
-            data_rows.push((visible, target));
+            let (visible, targets) = split_targets(cells);
+            data_rows.push((visible, targets));
         }
     }
 
@@ -50,6 +50,7 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
             Node {
                 flex_direction: FlexDirection::Column,
                 width: Val::Percent(100.0),
+                flex_shrink: 0.0,
                 border: UiRect::all(Val::Px(1.0)),
                 ..default()
             },
@@ -69,18 +70,19 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
                 true,
                 i,
                 tracks[i],
+                None,
             );
         }
     }
 
-    for (i, (cells, target)) in data_rows.iter().enumerate() {
+    for (i, (cells, targets)) in data_rows.iter().enumerate() {
         let data_row = spawn_lane(commands, root, false, i);
-        if let Some(t) = target {
+        if targets.len() == 1 {
             commands.entity(data_row).insert((
                 Button,
                 ActionButton {
                     label: cells.first().cloned().unwrap_or_default(),
-                    target_ref: t.clone(),
+                    target_ref: targets[0].clone(),
                 },
             ));
         }
@@ -92,6 +94,11 @@ pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
                 false,
                 j,
                 tracks[j],
+                if targets.len() > 1 {
+                    targets.get(j).cloned().filter(|t| t != "_")
+                } else {
+                    None
+                },
             );
         }
     }
@@ -108,6 +115,9 @@ fn column_tracks(n: usize, headers: &[String]) -> Vec<f32> {
         3 => vec![50.0, 25.0, 25.0],
         4 if headers.first().is_some_and(|h| h == "from") => vec![38.0, 38.0, 12.0, 12.0],
         4 => vec![54.0, 14.0, 18.0, 14.0],
+        6 if headers.first().is_some_and(|h| h == "step") => {
+            vec![10.0, 26.0, 26.0, 16.0, 12.0, 10.0]
+        }
         n => {
             let rest = 56.0 / (n as f32 - 1.0);
             let mut t = vec![44.0];
@@ -124,6 +134,7 @@ fn spawn_lane(commands: &mut Commands, parent: Entity, header: bool, i: usize) -
                 flex_direction: FlexDirection::Row,
                 width: Val::Percent(100.0),
                 min_width: Val::Percent(100.0),
+                flex_shrink: 0.0,
                 padding: UiRect::axes(Val::Px(theme::G * 1.5), Val::Px(theme::G)),
                 border: UiRect::bottom(Val::Px(1.0)),
                 overflow: Overflow::clip(),
@@ -139,20 +150,24 @@ fn spawn_lane(commands: &mut Commands, parent: Entity, header: bool, i: usize) -
         .id()
 }
 
-fn split_target(mut cells: Vec<String>) -> (Vec<String>, Option<String>) {
-    if cells.last().is_some_and(|c| {
-        c.starts_with("particle:")
-            || c.starts_with("cyb://")
-            || c.starts_with("model:")
-            || c.starts_with("fetch:")
-            || c.starts_with("vault:")
-            || c.starts_with("work:")
-    }) {
-        let t = cells.pop();
-        (cells, t)
-    } else {
-        (cells, None)
+fn is_target(c: &str) -> bool {
+    c == "_"
+        || c.starts_with("particle:")
+        || c.starts_with("cyb://")
+        || c.starts_with("model:")
+        || c.starts_with("fetch:")
+        || c.starts_with("vault:")
+        || c.starts_with("work:")
+        || c.starts_with("block:")
+}
+
+fn split_targets(mut cells: Vec<String>) -> (Vec<String>, Vec<String>) {
+    let mut targets = Vec::new();
+    while cells.last().is_some_and(|c| is_target(c)) {
+        targets.push(cells.pop().unwrap());
     }
+    targets.reverse();
+    (cells, targets)
 }
 
 fn spawn_cell(
@@ -162,6 +177,7 @@ fn spawn_cell(
     is_header: bool,
     col: usize,
     width_pct: f32,
+    target: Option<String>,
 ) {
     let numeric = col > 0;
     let (size, color) = if is_header {
@@ -185,50 +201,58 @@ fn spawn_cell(
             ColorStop::percent(veil, 100.0),
         ])
     };
-    commands
-        .spawn((
-            Node {
-                flex_direction: FlexDirection::Row,
-                width: Val::Percent(width_pct),
-                min_width: Val::Px(0.0),
-                max_width: Val::Percent(width_pct),
-                flex_grow: 0.0,
-                flex_shrink: 0.0,
-                overflow: Overflow::clip(),
-                justify_content: if numeric {
-                    JustifyContent::FlexEnd
-                } else {
-                    JustifyContent::FlexStart
-                },
-                align_items: AlignItems::Center,
-                padding: UiRect::horizontal(Val::Px(theme::G * 0.5)),
+    let mut e = commands.spawn((
+        Node {
+            flex_direction: FlexDirection::Row,
+            width: Val::Percent(width_pct),
+            min_width: Val::Px(0.0),
+            max_width: Val::Percent(width_pct),
+            flex_grow: 0.0,
+            flex_shrink: 0.0,
+            overflow: Overflow::clip(),
+            justify_content: if numeric {
+                JustifyContent::FlexEnd
+            } else {
+                JustifyContent::FlexStart
+            },
+            align_items: AlignItems::Center,
+            padding: UiRect::horizontal(Val::Px(theme::G * 0.5)),
+            ..default()
+        },
+        ChildOf(row),
+    ));
+    if let Some(t) = target {
+        e.insert((
+            Button,
+            ActionButton {
+                label: text.to_string(),
+                target_ref: t,
+            },
+        ));
+    }
+    e.with_children(|cell| {
+        cell.spawn((
+            Text::new(text.to_string()),
+            TextFont {
+                font_size: size,
                 ..default()
             },
-            ChildOf(row),
-        ))
-        .with_children(|cell| {
-            cell.spawn((
-                Text::new(text.to_string()),
-                TextFont {
-                    font_size: size,
-                    ..default()
-                },
-                TextColor(color),
-                TextLayout::new_with_no_wrap(),
-            ));
-            cell.spawn((
-                Node {
-                    position_type: PositionType::Absolute,
-                    top: Val::Px(0.0),
-                    bottom: Val::Px(0.0),
-                    width: Val::Px(fade_w),
-                    left: if numeric { Val::Px(0.0) } else { Val::Auto },
-                    right: if numeric { Val::Auto } else { Val::Px(0.0) },
-                    ..default()
-                },
-                BackgroundGradient::from(fade),
-                ZIndex(1),
-                Pickable::IGNORE,
-            ));
-        });
+            TextColor(color),
+            TextLayout::new_with_no_wrap(),
+        ));
+        cell.spawn((
+            Node {
+                position_type: PositionType::Absolute,
+                top: Val::Px(0.0),
+                bottom: Val::Px(0.0),
+                width: Val::Px(fade_w),
+                left: if numeric { Val::Px(0.0) } else { Val::Auto },
+                right: if numeric { Val::Auto } else { Val::Px(0.0) },
+                ..default()
+            },
+            BackgroundGradient::from(fade),
+            ZIndex(1),
+            Pickable::IGNORE,
+        ));
+    });
 }

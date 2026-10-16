@@ -8,7 +8,7 @@ status: proposed-ui
 
 Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
-commander chrome — bottom-center
+commander chroma — bottom-center
 
 Com is the user's input surface: buttons, decisions, questions and commands. Scheduled and autonomous work can enter through Plan/Soma as well; every effect still passes the same authority boundary.
 

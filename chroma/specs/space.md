@@ -8,7 +8,7 @@ status: proposed-ui
 
 Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
-location chrome — top-left
+location chroma — top-left
 
 This widget presents Now's context and the inspected typed destination. Its breadcrumb describes the active view and particle; it does not select an acting neuron. Now is the context organ under [anatomy](../../../cyb/anatomy.md); space is the area in which a view renders.
 

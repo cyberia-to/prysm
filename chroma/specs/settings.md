@@ -12,7 +12,7 @@ settings view — accessible from the robot menu
 
 Settings presents Soul configuration, Sigma attachment management, Vault key references and adapter configuration. Sidebar sections are UI groupings, not organs or signing subjects.
 
-Not a chrome slot: opens as a view from the robot menu. Avatar visualizes the robot; menu placement grants no identity or key ownership.
+Not a chroma slot: opens as a view from the robot menu. Avatar visualizes the robot; menu placement grants no identity or key ownership.
 
 ## structure
 

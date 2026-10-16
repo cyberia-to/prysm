@@ -229,11 +229,11 @@ composition happens at the cyberlink layer only.
 
 | old                              | new                                              |
 |----------------------------------|--------------------------------------------------|
-| `shell/chrome.rs` (ad + com)     | `prysm/chroma/ad.rs` + `prysm/chroma/com.rs`    |
+| `shell/chroma.rs` (ad + com)     | `prysm/chroma/ad.rs` + `prysm/chroma/com.rs`    |
 | `worlds/` enum + state           | `prysm/spacetime/` with renderer swap            |
 | `PendingShellCmd` resource       | `(com, spacetime, submit, …)` cyberlink in Signal |
 | direct `NextState<WorldState>`   | `(com, spacetime, switch-renderer, …)` cyberlink  |
-| chrome accessing terminal state  | impossible — different chromas, different crates  |
+| chroma accessing terminal state  | impossible — different chromas, different crates  |
 
 ## why
 

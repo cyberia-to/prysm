@@ -8,7 +8,7 @@ status: proposed-ui
 
 Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
-map chrome — bottom-left
+map chroma — bottom-left
 
 Brain is the rendered graph: browse particles, traverse cyberlinks and inspect neighborhoods. Memory is the separate filesystem/table/tile projection of particles. Both share Now's context; neither owns a signing identity.
 
@@ -16,7 +16,7 @@ The graph visualization molecule renders particles and links in several views, i
 
 ## protocol role
 
-molecule in the element tree $\mathcal{T}$. in chrome: bottom-left grid zone. as a view: fills the space zone or embeds in search/robot views
+molecule in the element tree $\mathcal{T}$. in chroma: bottom-left grid zone. as a view: fills the space zone or embeds in search/robot views
 
 ## core function
 
@@ -109,7 +109,7 @@ tap fullscreen → brain covers entire viewport, all grid zones hidden. only ren
 | loading | "loading..." | fetching graph data |
 | rendered | particles + links visible | data loaded |
 | selecting | highlight mode — "select 2 particles" | commander prompt |
-| fullscreen | chrome hidden, graph fills viewport | fullscreen toggle |
+| fullscreen | chroma hidden, graph fills viewport | fullscreen toggle |
 
 ### interaction
 

@@ -3,7 +3,7 @@
 The visual protocol for [[cyb]]: compose typed data into atoms, molecules and views.
 
 This repository contains renderer code and a broader proposed design. The design
-pages specify target behavior; their ECS sketches, chrome arrangements and proof
+pages specify target behavior; their ECS sketches, chroma arrangements and proof
 obligations do not establish that every feature is implemented. Implementation
 and validation evidence belongs in `audit/`.
 

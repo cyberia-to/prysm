@@ -8,7 +8,7 @@ status: proposed-ui
 
 Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
-resource chrome — mid-right
+resource chroma — mid-right
 
 Sigma projects the robot's assets and manages its attached neurons, as defined by [anatomy](../../../cyb/anatomy.md). The Σ widget opens the assets/identities view. Avatar is the robot's visualization; Vault holds secrets and performs scoped signing.
 
@@ -31,7 +31,7 @@ These are adapter intents/projections, not automatic cyberlinks. The [compositio
 | spacetime | switch-renderer | open sigma assets/neurons in space zone |
 | log/time | record | display persisted transfer attempts and outcomes from Cybergraph/BBG |
 
-## widget layout (chrome slot)
+## widget layout (chroma slot)
 
 ```
 glass [fix × fill(mid-right edge), depth overlay]

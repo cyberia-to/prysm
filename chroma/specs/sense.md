@@ -8,9 +8,9 @@ status: proposed-ui
 
 Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
-notifications chrome — mid-left
+notifications chroma — mid-left
 
-**notify**: ambient signals from the world. incoming messages, system events, sensor data. the sense chrome is where the world enters — before language, before computation, raw contact between an agent and its environment
+**notify**: ambient signals from the world. incoming messages, system events, sensor data. the sense chroma is where the world enters — before language, before computation, raw contact between an agent and its environment
 
 Also the full [Sense](../../../cyb/parts/sense.md) view: conversations with neurons and robots, particle history, and a proposed projection of Soma conversations. Soma owns cognition; Vision, Voice and Body own their sensory/device responsibilities.
 
@@ -28,7 +28,7 @@ molecule in the element tree $\mathcal{T}$. membrane = mid-left zone of [[prysm/
 
 ## core function
 
-the sense chrome slot shows an unread count and the emotional state of the latest incoming signal. any chroma can post a notification via `(*, sense, notify, …)`. sense never disrupts spacetime — it accumulates signals at the edge and lets the user decide when to open them.
+the sense chroma slot shows an unread count and the emotional state of the latest incoming signal. any chroma can post a notification via `(*, sense, notify, …)`. sense never disrupts spacetime — it accumulates signals at the edge and lets the user decide when to open them.
 
 ## Proposed host events
 
@@ -43,7 +43,7 @@ Local notification events do not imply graph publication. Conversations preserve
 |----------|-------|---------|
 | spacetime | switch-renderer | open sense messenger in space zone |
 
-## widget layout (chrome slot)
+## widget layout (chroma slot)
 
 ```
 glass [fix × fill(mid-left edge), depth overlay]

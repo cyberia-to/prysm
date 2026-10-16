@@ -6,7 +6,7 @@ crystal-domain: cyber
 status: proposed-ui
 ---
 
-Time view and history chrome.
+Time view and history chroma.
 
 Proposed UI contract under [composition](../../system/specs/composition.md).
 Layouts and ECS records below specify intended behavior, not shipped coverage.
