@@ -2,7 +2,7 @@ use bevy::input::keyboard::{Key, KeyboardInput};
 use bevy::ecs::message::MessageReader;
 use bevy::prelude::*;
 use crate::theme;
-use crate::atoms::glass::{GlassDepth, glass_bg};
+use crate::atoms::glass::{GlassDepth, glass};
 
 #[derive(Component)]
 pub struct TextInput {
@@ -71,9 +71,10 @@ pub fn spawn_input(parent: &mut ChildSpawnerCommands, placeholder: &str) -> Enti
             Node {
                 width: Val::Percent(100.0),
                 padding: UiRect::all(Val::Px(theme::G)),
+                border: UiRect::all(Val::Px(1.0)),
                 ..default()
             },
-            glass_bg(GlassDepth::Midground),
+            glass(GlassDepth::Midground),
         ))
         .with_children(|p| {
             p.spawn((

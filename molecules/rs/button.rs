@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use crate::theme;
-use crate::atoms::glass::{GlassDepth, glass_bg, saber_h};
+use crate::atoms::glass::{GlassDepth, glass, saber_h};
 
 #[derive(Component)]
 pub struct ButtonPrysm;
@@ -14,9 +14,10 @@ pub fn spawn_button(parent: &mut ChildSpawnerCommands, label: &str) -> Entity {
                 flex_direction: FlexDirection::Column,
                 align_items: AlignItems::Center,
                 padding: UiRect::axes(Val::Px(theme::G * 2.0), Val::Px(theme::G)),
+                border: UiRect::all(Val::Px(1.0)),
                 ..default()
             },
-            glass_bg(GlassDepth::Midground),
+            glass(GlassDepth::Midground),
         ))
         .with_children(|b| {
             saber_h(b);

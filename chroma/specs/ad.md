@@ -5,7 +5,7 @@ crystal-type: pattern
 crystal-domain: cyber
 ---
 
-advisor chrome — top-center
+advisor chroma — top-center
 
 **answer**: ambient dialogue from the app. hints, suggestions, responses — delivered without disrupting [[spacetime]]. the voice of the system, not the neuron. appears in two modes: as the top-center grid zone bar and as a contextual popup near any organelle
 
@@ -18,7 +18,7 @@ adviser is a molecule in the element tree $\mathcal{T}$. two modes:
 
 ## core function
 
-the ad chrome receives messages from any chroma and renders them as contextual guidance. it never initiates — it only responds. when [[com]] receives partial input, ad may offer a completion hint. when [[spacetime]] switches world, ad may offer orientation text.
+the ad chroma receives messages from any chroma and renders them as contextual guidance. it never initiates — it only responds. when [[com]] receives partial input, ad may offer a completion hint. when [[spacetime]] switches world, ad may offer orientation text.
 
 ## cyberlinks
 

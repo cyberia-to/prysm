@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 use crate::theme;
 
+/// How far a surface sits from the black base. Depth reads as the brightness
+/// of the surface's hairline — never as a lighter fill. A lighter fill washes
+/// out white content, so every surface in every view stays [`theme::DARK_BASE`].
 #[derive(Clone, Copy, Debug)]
 pub enum GlassDepth {
     Subtle,
@@ -9,14 +12,28 @@ pub enum GlassDepth {
     Foreground,
 }
 
-pub fn glass_bg(depth: GlassDepth) -> BackgroundColor {
-    let alpha = match depth {
-        GlassDepth::Subtle     => theme::SUBTLE,
-        GlassDepth::Background => theme::BACKGROUND,
-        GlassDepth::Midground  => theme::MIDGROUND,
-        GlassDepth::Foreground => theme::FOREGROUND,
-    };
-    BackgroundColor(Color::srgba(1.0, 1.0, 1.0, alpha))
+impl GlassDepth {
+    fn alpha(self) -> f32 {
+        match self {
+            GlassDepth::Subtle     => theme::SUBTLE,
+            GlassDepth::Background => theme::BACKGROUND,
+            GlassDepth::Midground  => theme::MIDGROUND,
+            GlassDepth::Foreground => theme::FOREGROUND,
+        }
+    }
+}
+
+/// Fill and hairline for a glass surface. Spawn both, and give the `Node` a
+/// `border` — without one the hairline has nothing to draw on and the surface
+/// disappears into the base.
+pub fn glass(depth: GlassDepth) -> (BackgroundColor, BorderColor) {
+    // The hairline carries depth in its alpha and the interface's own hue in
+    // its colour. White at low alpha over black is grey, and grey edges make
+    // a black surface look grey — the one thing this palette does not do.
+    (
+        BackgroundColor(theme::DARK_BASE),
+        BorderColor::all(theme::acid(depth.alpha())),
+    )
 }
 
 #[derive(Component)]
@@ -33,6 +50,8 @@ pub fn saber_h(commands: &mut ChildSpawnerCommands) {
             height: Val::Px(1.0),
             ..default()
         },
-        BackgroundColor(Color::srgba(1.0, 1.0, 1.0, 0.10)),
+        // Same rule as the glass hairline: tinted, never neutral grey, and the
+        // hue read from the palette rather than written out here.
+        BackgroundColor(theme::acid(0.14)),
     ));
 }

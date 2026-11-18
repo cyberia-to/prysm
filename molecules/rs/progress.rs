@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use tape::Chunk;
+use tade::Chunk;
 use crate::theme;
 
 #[derive(Component)]
@@ -12,7 +12,7 @@ pub struct ProgressFill;
 pub struct ProgressLabel;
 
 pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
-    let m = tape::read_kv(&chunk.payload);
+    let m = tade::read_kv(&chunk.payload);
     let label   = kv_str(&m, "label", "");
     let current = kv_u64(&m, "current");
     let total   = kv_u64(&m, "total");

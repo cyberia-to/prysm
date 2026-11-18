@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use crate::theme;
-use crate::atoms::glass::{GlassDepth, glass_bg, saber_h};
+use crate::atoms::glass::{GlassDepth, glass, saber_h};
 
 #[derive(Component)]
 pub struct TabItem {
@@ -36,9 +36,10 @@ pub fn spawn_commander(
                     flex_direction: FlexDirection::Row,
                     padding: UiRect::all(Val::Px(theme::G)),
                     column_gap: Val::Px(theme::G),
+                    border: UiRect::all(Val::Px(1.0)),
                     ..default()
                 },
-                glass_bg(GlassDepth::Background),
+                glass(GlassDepth::Background),
             ))
             .with_children(|row| {
                 for (i, &label) in labels.iter().enumerate() {

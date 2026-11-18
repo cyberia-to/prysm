@@ -2,7 +2,10 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 3D geometry atom in [[prysm]]
 
@@ -54,7 +57,7 @@ if the glTF contains animation tracks, mesh exposes an `AnimationState`:
 | playing | advancing animation clock |
 | paused | animation clock stopped |
 
-animation playback is driven at the molecule/cell level — mesh atom exposes the clock
+animation playback is driven at the molecule/view level — mesh atom exposes the clock
 
 ## states
 

@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use tape::Chunk;
+use tade::Chunk;
 use crate::theme;
 
 pub fn spawn(commands: &mut Commands, parent: Entity, chunk: &Chunk) -> Entity {
-    let m = tape::read_kv(&chunk.payload);
+    let m = tade::read_kv(&chunk.payload);
     let code: i32 = m.get("code")
         .and_then(|c| String::from_utf8_lossy(&c.payload).parse().ok())
         .unwrap_or(0);

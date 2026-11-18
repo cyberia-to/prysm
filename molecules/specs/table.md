@@ -2,7 +2,10 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 data grid molecule in [[prysm]]
 
@@ -49,6 +52,19 @@ $\mathcal{F}$:
 - icon columns: center-aligned
 - headers inherit alignment from data column
 
+A column is numeric when it holds at least one value and every value standing in
+it reads as a number — digits with an optional sign, group separators, a decimal
+point or a trailing percent. Alignment is read from the column's own cells, never
+from its position in the row and never from the word in its header.
+
+## column tracks
+
+One width per column, the same on every lane. A column's share of the lane
+follows the widest value standing in it, its header included, with a floor of
+half an even share so a narrow column stays readable; the shares sum to the full
+lane. The widths come from the frame the renderer was handed — it carries no
+table of any caller's column names.
+
 ## filter and sort
 
 from §6.2 of [[prysm/layout]]:
@@ -57,6 +73,27 @@ filter: predicate $f: row \to \{\text{true}, \text{false}\}$. hidden rows get $s
 sort: ordering $\sigma$ on rows. changes placement, not sizing
 
 both applied before layout pass. ECS: `GridFilter`, `GridSort`, `FilterSortSystem`
+
+Rows retain their subject, identity domain, network and source evidence even when
+columns are folded or sorted. A shared display address or token ticker is not a
+row identity; aggregation must disclose its scope and preserve the original rows.
+
+## row targets
+
+A row may carry a target — what tapping it opens. Targets ride as trailing cells
+of the row after its data cells: one trailing cell makes the whole row a button,
+and one trailing cell per column makes each cell its own link, with `_` for a
+cell that has none. A single trailing `_` is a row that declares no target: it
+leaves the row like any other target cell and installs nothing, so the row stays
+unclickable. A target is recognised by its prefix: `particle:`, `cyb://`,
+`model:`, `fetch:`, `vault:`, `work:`, `block:`.
+
+The renderer reads the convention from content, so a data cell equal to `_` or
+beginning with one of those prefixes is taken for a target and leaves the row.
+The carrier is the defect, not the renderer: targets belong in a sigil of their
+own or behind a declared trailing count, and that change has to land in every
+producer and renderer of the stream at once (prysm `molecules/rs/table.rs`, cyb
+`shell/src/worlds/windowed.rs`).
 
 ## variants
 

@@ -2,7 +2,10 @@
 tags: prysm, cyb
 crystal-type: pattern
 crystal-domain: cyber
+status: proposed-ui
 ---
+
+Proposed UI contract under [composition](../../system/specs/composition.md). Layouts, ECS records and interactions below specify intended behavior, not shipped coverage.
 
 [[particle]] renderer molecule in [[prysm]]
 
@@ -10,7 +13,7 @@ the universal content display. any [[particle]] â€” text, image, video, audio â€
 
 ## protocol role
 
-molecule in $\mathcal{T}$. lives inside space zone, [[prysm/display]], [[prysm/oracle-cell]]
+molecule in $\mathcal{T}$. lives inside space zone, [[prysm/display]], the [graph-search view proposal](../../../aos/oracle.md)
 
 ## sizing
 
@@ -45,7 +48,7 @@ $\mathcal{F}$:
 
 ## emotion
 
-content carries [[emotion]] from [[cyberank]] of the particle: high-confidence results = green accent, low = neutral
+Content may carry an accent from sourced cyberank. Rank describes the declared graph computation, not truth, authorship, content integrity or action authority. Preserve source/evidence and freshness independently of the accent.
 
 ## states
 
@@ -58,7 +61,7 @@ content carries [[emotion]] from [[cyberank]] of the particle: high-confidence r
 
 ## 3D
 
-renders at membrane's $p_z$. image/video particles face neuron (billboard)
+renders at membrane's $p_z$. image/video particles face the viewer (billboard)
 
 ## ECS
 

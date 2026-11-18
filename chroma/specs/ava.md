@@ -5,7 +5,7 @@ crystal-type: pattern
 crystal-domain: cyber
 ---
 
-avatar chrome — top-right
+avatar chroma — top-right
 
 **who**: identity. shows the active [[neuron]]'s avatar, name, and connection state. gateway to [[settings]] and the full [[robot]] profile
 
