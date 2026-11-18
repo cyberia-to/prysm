@@ -256,3 +256,66 @@ fn spawn_cell(
         ));
     });
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{column_tracks, split_targets};
+
+    fn headers(hs: &[&str]) -> Vec<String> {
+        hs.iter().map(|h| h.to_string()).collect()
+    }
+
+    fn sums_to_a_hundred(tracks: &[f32]) -> bool {
+        (tracks.iter().sum::<f32>() - 100.0).abs() < 0.05
+    }
+
+    #[test]
+    fn one_track_per_column_and_the_tracks_fill_the_lane() {
+        for n in 1..=12usize {
+            let tracks = column_tracks(n, &[]);
+            assert_eq!(tracks.len(), n, "{n} columns need {n} tracks");
+            assert!(sums_to_a_hundred(&tracks), "{n} columns: {tracks:?}");
+        }
+    }
+
+    #[test]
+    fn a_table_with_no_columns_still_has_one_track() {
+        let tracks = column_tracks(0, &[]);
+        assert_eq!(tracks.len(), 1);
+        assert!(sums_to_a_hundred(&tracks));
+    }
+
+    #[test]
+    fn the_named_shapes_fill_the_lane_too() {
+        let from_to = column_tracks(4, &headers(&["from", "to", "amount", "when"]));
+        assert_eq!(from_to, vec![38.0, 38.0, 12.0, 12.0]);
+        assert!(sums_to_a_hundred(&from_to));
+
+        let steps = column_tracks(6, &headers(&["step", "from", "to", "amount", "fee", "time"]));
+        assert_eq!(steps.len(), 6);
+        assert!(sums_to_a_hundred(&steps));
+    }
+
+    #[test]
+    fn a_row_whose_last_cell_is_data_keeps_every_cell() {
+        let row = headers(&["Cargo.toml", "512 B", "2m ago"]);
+        let (visible, targets) = split_targets(row.clone());
+        assert_eq!(visible, row, "a data row must not lose its last cell");
+        assert!(targets.is_empty(), "a data row declares no target");
+    }
+
+    #[test]
+    fn a_trailing_target_leaves_the_row_and_becomes_its_target() {
+        let (visible, targets) = split_targets(headers(&["zheng", "idle", "work:zheng"]));
+        assert_eq!(visible, headers(&["zheng", "idle"]));
+        assert_eq!(targets, headers(&["work:zheng"]));
+    }
+
+    #[test]
+    fn one_target_per_column_keeps_its_column_order() {
+        let (visible, targets) =
+            split_targets(headers(&["a", "b", "c", "particle:aa", "_", "cyb://brain"]));
+        assert_eq!(visible, headers(&["a", "b", "c"]));
+        assert_eq!(targets, headers(&["particle:aa", "_", "cyb://brain"]));
+    }
+}

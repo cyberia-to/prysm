@@ -9,7 +9,7 @@ Proposed UI contract under [composition](../../system/specs/composition.md). Lay
 
 call-to-action molecule in [[prysm]]
 
-the primary interaction primitive. a button emits a user intent; autonomous and scheduled neuron actions need no button. a transparent region bounded by vertical [[prysm/saber]] lines with glow radiating inward
+the primary interaction primitive. a button emits a [[neuron]]'s intent; autonomous and scheduled neuron actions need no button. a transparent region bounded by vertical [[prysm/saber]] lines with glow radiating inward
 
 ## protocol role
 

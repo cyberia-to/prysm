@@ -34,8 +34,6 @@ pub use molecules::{
 };
 pub use layout::scrollback::{StreamChannel, StreamScrollback, StreamPlugin, dispatch};
 
-pub mod navigation;
-
 use bevy::prelude::*;
 
 pub struct PrysmPlugin;
@@ -44,8 +42,6 @@ impl Plugin for PrysmPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(layout::scrollback::StreamPlugin)
             .init_resource::<ActiveTab>()
-            .init_resource::<navigation::ActiveDestination>()
-            .init_resource::<navigation::DestinationList>()
             .add_systems(Update, (
                 molecules::text_input_system,
                 molecules::input_focus_system,

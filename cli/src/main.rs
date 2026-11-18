@@ -14,7 +14,13 @@
 //! you can read a stream's *meaning* where `tade inspect` shows its envelope.
 //!
 //! SYNC: the routing table below mirrors `prysm/system/rs/scrollback.rs` — keep
-//! them in step.
+//! them in step. The copy is local on purpose: step 3 of the tade·nox·spark·prysm
+//! proposal ("catalog → spark: prysm reads spark; it does not hold a vocabulary
+//! of its own") moves the `(sigil, render)` catalog into spark, and no spark
+//! crate exists to read yet. When one does, this table and the scrollback
+//! dispatch both read it instead of carrying rows. Step 5 of the same proposal
+//! (tty → ANSI, pipe → tade chunks ending in STATUS) is not implemented here:
+//! piped output is plain text.
 
 use std::io::{self, IsTerminal, Read};
 
@@ -53,37 +59,42 @@ const LOGO: &str = "\
 \x1b[34m██║     ██║  ██║   ██║   ███████║██║ ╚═╝ ██║\x1b[0m
 \x1b[35m╚═╝     ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝     ╚═╝\x1b[0m";
 
-/// The `(sigil, render) → molecule` routing — mirrors prysm's scrollback dispatch.
+/// The `(sigil, render) → molecule` routing — one row per arm of prysm's
+/// scrollback dispatch, in its order. `molecule()` looks a frame up here and
+/// `prysm molecules` prints these rows, so the printed table cannot drift from
+/// the routing, and the labels come from tade's own names rather than by hand.
+const ROUTES: &[(u8, u8, &str)] = &[
+    (sigil::HAX, render::TEXT, "text"),
+    (sigil::SIG, render::TEXT, "annotation"),
+    (sigil::PAT, render::TEXT, "neuron"),
+    (sigil::DOT, render::LOG, "log"),
+    (sigil::ZAP, render::ERROR, "error"),
+    (sigil::DOT, render::STATUS, "status"),
+    (sigil::DOT, render::PROGRESS, "progress"),
+    (sigil::ZAP, render::COMPONENT, "action"),
+    (sigil::BUC, render::COMPONENT, "stat"),
+    (sigil::LUS, render::COMPONENT, "row"),
+    (sigil::BAR, render::COMPONENT, "component"),
+    (sigil::FAS, render::COMPONENT, "scope"),
+    (sigil::HAX, render::TABLE, "table"),
+    (sigil::FAS, render::STRUCT, "scope"),
+    (sigil::COL, render::STRUCT, "pair"),
+];
+
+/// A frame prysm has no molecule for: the scrollback shows it as a debug label.
+const RAW: &str = "raw";
+
 fn molecule(sig: u8, ren: u8) -> &'static str {
-    match (sig, ren) {
-        (sigil::HAX, render::TEXT) => "text",
-        (sigil::SIG, render::TEXT) => "annotation",
-        (sigil::PAT, render::TEXT) => "neuron",
-        (sigil::DOT, render::LOG) => "log",
-        (sigil::ZAP, render::ERROR) => "error",
-        (sigil::DOT, render::STATUS) => "status",
-        (sigil::DOT, render::PROGRESS) => "progress",
-        (sigil::ZAP, render::COMPONENT) => "action",
-        (sigil::BAR, render::COMPONENT) => "component",
-        (sigil::FAS, render::COMPONENT) => "scope",
-        (sigil::HAX, render::TABLE) => "table",
-        _ => "raw",
-    }
+    ROUTES
+        .iter()
+        .find(|(s, r, _)| *s == sig && *r == ren)
+        .map_or(RAW, |&(_, _, mol)| mol)
 }
 
-const ROUTES: &[(&str, &str, &str)] = &[
-    ("# hax", "t text", "text"),
-    ("~ sig", "t text", "annotation"),
-    ("@ pat", "t text", "neuron"),
-    (". dot", "l log", "log"),
-    ("! zap", "e error", "error"),
-    (". dot", "x status", "status"),
-    (". dot", "p progress", "progress"),
-    ("! zap", "c component", "action"),
-    ("| bar", "c component", "component"),
-    ("/ fas", "c component", "scope"),
-    ("# hax", "T table", "table"),
-];
+/// `# hax`, `t text` — the byte as it appears in a stream, with tade's name.
+fn label(byte: u8, name: &str) -> String {
+    format!("{} {name}", byte as char)
+}
 
 fn banner() {
     if !tty() {
@@ -132,15 +143,23 @@ fn cmd_render(path: Option<&str>) {
     reader.feed(&bytes);
     println!("  {}   {}  {}", dim("#"), dim(&format!("{:<11}", "molecule")), dim("content"));
     let mut n = 0u64;
+    let mut framed = 0usize;
+    // Pending is not Eof: the reader stopped on bytes that do not form a frame.
+    let mut truncated = false;
     loop {
         match reader.next_chunk() {
             ReadResult::Chunk(c) => {
                 let mol = molecule(c.sigil, c.render);
-                let name = if mol == "raw" { dim(&format!("{mol:<11}")) } else { cyan(&format!("{mol:<11}")) };
+                let name = if mol == RAW { dim(&format!("{mol:<11}")) } else { cyan(&format!("{mol:<11}")) };
                 println!("  {:>2}   {}  {}", yellow(&n.to_string()), name, content(&c));
                 n += 1;
+                framed += c.encode().len();
             }
-            ReadResult::Pending | ReadResult::Eof => break,
+            ReadResult::Pending => {
+                truncated = true;
+                break;
+            }
+            ReadResult::Eof => break,
         }
     }
     if n == 0 {
@@ -148,13 +167,23 @@ fn cmd_render(path: Option<&str>) {
     } else {
         println!("  {}", dim(&format!("{n} frame(s)")));
     }
+    if truncated {
+        let loose = bytes.len().saturating_sub(framed);
+        eprintln!(
+            "  {}: {loose} byte(s) outside a complete frame — the input does not end on a frame boundary",
+            red("truncated")
+        );
+        std::process::exit(1);
+    }
 }
 
 fn cmd_molecules() {
     println!("{}", dim("(sigil, render) → molecule"));
     println!("  {}  {}  {}", dim(&format!("{:<8}", "sigil")), dim(&format!("{:<14}", "render")), dim("molecule"));
-    for (sig, ren, mol) in ROUTES {
-        println!("  {}  {}  {}", cyan(&format!("{sig:<8}")), green(&format!("{ren:<14}")), bold(mol));
+    for &(sig, ren, mol) in ROUTES {
+        let s = label(sig, sigil::name(sig));
+        let r = label(ren, render::name(ren));
+        println!("  {}  {}  {}", cyan(&format!("{s:<8}")), green(&format!("{r:<14}")), bold(mol));
     }
 }
 
@@ -168,5 +197,74 @@ fn main() {
             eprintln!("  {}: {other}  (try: prysm help)", dim("unknown"));
             std::process::exit(2);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Every arm of `dispatch` in prysm/system/rs/scrollback.rs, in its order,
+    /// written out independently of ROUTES: this is the copy that fails when
+    /// the renderer learns a frame and the CLI does not.
+    const DISPATCH: &[(u8, u8, &str)] = &[
+        (sigil::HAX, render::TEXT, "text"),
+        (sigil::SIG, render::TEXT, "annotation"),
+        (sigil::PAT, render::TEXT, "neuron"),
+        (sigil::DOT, render::LOG, "log"),
+        (sigil::ZAP, render::ERROR, "error"),
+        (sigil::DOT, render::STATUS, "status"),
+        (sigil::DOT, render::PROGRESS, "progress"),
+        (sigil::ZAP, render::COMPONENT, "action"),
+        (sigil::BUC, render::COMPONENT, "stat"),
+        (sigil::LUS, render::COMPONENT, "row"),
+        (sigil::BAR, render::COMPONENT, "component"),
+        (sigil::FAS, render::COMPONENT, "scope"),
+        (sigil::HAX, render::TABLE, "table"),
+        (sigil::FAS, render::STRUCT, "scope"),
+        (sigil::COL, render::STRUCT, "pair"),
+    ];
+
+    #[test]
+    fn every_scrollback_arm_has_its_molecule() {
+        for &(sig, ren, mol) in DISPATCH {
+            assert_eq!(
+                molecule(sig, ren),
+                mol,
+                "({} {}) must render as {mol}",
+                sig as char,
+                ren as char
+            );
+        }
+    }
+
+    #[test]
+    fn the_printed_table_holds_exactly_the_routing() {
+        assert_eq!(ROUTES.len(), DISPATCH.len(), "ROUTES and the dispatch differ in length");
+        for (row, arm) in ROUTES.iter().zip(DISPATCH) {
+            assert_eq!(row, arm, "the printed table drifted from the dispatch");
+        }
+    }
+
+    #[test]
+    fn a_frame_outside_the_routing_is_raw() {
+        assert_eq!(molecule(sigil::KET, render::AUDIO), RAW);
+        assert_eq!(molecule(sigil::HAX, render::MOVIE), RAW);
+    }
+
+    #[test]
+    fn every_route_names_a_valid_sigil_and_render() {
+        for &(sig, ren, _) in ROUTES {
+            assert!(sigil::is_valid(sig), "{} is not a sigil", sig as char);
+            assert!(render::is_valid(ren), "{} is not a render", ren as char);
+            assert_ne!(sigil::name(sig), "unknown");
+            assert_ne!(render::name(ren), "unknown");
+        }
+    }
+
+    #[test]
+    fn a_label_is_the_byte_then_its_name() {
+        assert_eq!(label(sigil::HAX, sigil::name(sigil::HAX)), "# hax");
+        assert_eq!(label(render::TABLE, render::name(render::TABLE)), "T table");
     }
 }

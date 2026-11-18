@@ -10,7 +10,7 @@ Proposed UI contract under [composition](../../system/specs/composition.md). Lay
 
 commander chroma — bottom-center
 
-Com is the user's input surface: buttons, decisions, questions and commands. Scheduled and autonomous work can enter through Plan/Soma as well; every effect still passes the same authority boundary.
+Com is the neuron's input surface: buttons, decisions, questions and commands. Scheduled and autonomous work can enter through Plan/Soma as well; every effect still passes the same authority boundary.
 
 ## protocol role
 
@@ -126,7 +126,7 @@ saber underline of the input field carries [[emotion]]:
 | state | glow-color | trigger |
 |-------|-----------|---------|
 | idle | #ffffff (white) | no activity |
-| typing | #00fe00 (green) | user is entering text |
+| typing | #00fe00 (green) | neuron is entering text |
 | error | #ff0000 (red) | invalid input, failed transaction |
 | signing | #00fe00 (green, pulsing) | [[cyberlink]] being signed |
 | success | #00fe00 (green, fades) | action completed |

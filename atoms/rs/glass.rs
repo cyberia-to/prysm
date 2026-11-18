@@ -30,7 +30,7 @@ pub fn glass(depth: GlassDepth) -> (BackgroundColor, BorderColor) {
     // The hairline carries depth in its alpha and the interface's own hue in
     // its colour. White at low alpha over black is grey, and grey edges make
     // a black surface look grey — the one thing this palette does not do.
-    let Color::Srgba(acid) = theme::ACID_GREEN else { unreachable!() };
+    let acid = theme::ACID_GREEN.to_srgba();
     (
         BackgroundColor(theme::DARK_BASE),
         BorderColor::all(Color::srgba(acid.red, acid.green, acid.blue, depth.alpha())),

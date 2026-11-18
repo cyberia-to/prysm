@@ -9,7 +9,7 @@ Proposed UI contract under [composition](../../system/specs/composition.md). Lay
 
 the interaction protocol in [[prysm]]
 
-interaction is how user input changes the element tree $\mathcal{T}$. the layout protocol (§4) produces coordinates. the [[prysm/emotion]] function produces colors. the interaction protocol produces state transitions. three independent systems, one interface
+interaction is how a [[neuron]] changes the element tree $\mathcal{T}$. the layout protocol (§4) produces coordinates. the [[prysm/emotion]] function produces colors. the interaction protocol produces state transitions. three independent systems, one interface
 
 ## input events
 

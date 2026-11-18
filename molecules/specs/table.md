@@ -65,6 +65,21 @@ Rows retain their subject, identity domain, network and source evidence even whe
 columns are folded or sorted. A shared display address or token ticker is not a
 row identity; aggregation must disclose its scope and preserve the original rows.
 
+## row targets
+
+A row may carry a target — what tapping it opens. Targets ride as trailing cells
+of the row after its data cells: one trailing cell makes the whole row a button,
+and one trailing cell per column makes each cell its own link, with `_` for a
+cell that has none. A target is recognised by its prefix: `particle:`, `cyb://`,
+`model:`, `fetch:`, `vault:`, `work:`, `block:`.
+
+The renderer reads the convention from content, so a data cell equal to `_` or
+beginning with one of those prefixes is taken for a target and leaves the row.
+The carrier is the defect, not the renderer: targets belong in a sigil of their
+own or behind a declared trailing count, and that change has to land in every
+producer and renderer of the stream at once (prysm `molecules/rs/table.rs`, cyb
+`shell/src/worlds/windowed.rs`).
+
 ## variants
 
 | variant | structure | use |

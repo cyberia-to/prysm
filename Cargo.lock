@@ -3995,6 +3995,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "prysm-cli"
+version = "0.1.0"
+dependencies = [
+ "tade",
+]
+
+[[package]]
 name = "pxfm"
 version = "0.1.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"

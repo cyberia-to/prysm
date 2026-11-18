@@ -28,7 +28,7 @@ molecule in the element tree $\mathcal{T}$. membrane = mid-left zone of [[prysm/
 
 ## core function
 
-the sense chroma slot shows an unread count and the emotional state of the latest incoming signal. any chroma can post a notification via `(*, sense, notify, …)`. sense never disrupts spacetime — it accumulates signals at the edge and lets the user decide when to open them.
+the sense chroma slot shows an unread count and the emotional state of the latest incoming signal. any chroma can post a notification via `(*, sense, notify, …)`. sense never disrupts spacetime — it accumulates signals at the edge and lets the neuron decide when to open them.
 
 ## Proposed host events
 

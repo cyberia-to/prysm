@@ -18,7 +18,7 @@ context is a molecule in the element tree $\mathcal{T}$. membrane = context zone
 
 ## core function
 
-orientation — the user can inspect the current destination and context. space renders the active world name, the current path inside it, and a breadcrumb trail back to root.
+orientation — the neuron can inspect the current destination and context. space renders the active world name, the current path inside it, and a breadcrumb trail back to root.
 
 receives host navigation events when the active renderer changes. A UI event is not automatically a persisted or signed cyberlink.
 

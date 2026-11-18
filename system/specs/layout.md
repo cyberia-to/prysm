@@ -16,7 +16,7 @@ a formal spatial composition system for the interface of [[superintelligence]]
 
 ## 0. abstract
 
-This paper proposes a layout composition algebra for user interfaces. the protocol is a pure function: element tree × viewport → exact coordinates for every element. three axioms generate the entire system: a membrane-organelle protocol ($\Pi$: constrain → occupy → place), three sizing primitives ($\Phi$: fix, fill, scale — the three relations between part and whole), and three container topologies ($\mathcal{K}$: stack, grid, layer — 1D chain, 2D lattice, depth). all sizes are expressed in quanta of a spatial quantum $g = 8$, derived from visual acuity, Fitts's law, and quantum alignment. the protocol is renderer-independent, deterministic, and completes in $\mathcal{O}(n)$ time
+This paper proposes a layout composition algebra for interfaces. the protocol is a pure function: element tree × viewport → exact coordinates for every element. three axioms generate the entire system: a membrane-organelle protocol ($\Pi$: constrain → occupy → place), three sizing primitives ($\Phi$: fix, fill, scale — the three relations between part and whole), and three container topologies ($\mathcal{K}$: stack, grid, layer — 1D chain, 2D lattice, depth). all sizes are expressed in quanta of a spatial quantum $g = 8$, derived from visual acuity, Fitts's law, and quantum alignment. the protocol is renderer-independent, deterministic, and completes in $\mathcal{O}(n)$ time
 
 14 theorems with proofs: linear time (T1), determinism (T2), sizing irreducibility (T3) and completeness (T4), container completeness (T5), optimal fold derivation (T6), urgency-gravity composition (T7), multimodal generalization (T8), branching fold via Pareto front (T9), rewrite termination (T10), confluence (T11), algebra completeness (T12), amortized $\mathcal{O}(1)$ fold selection (T13), multi-node decomposition (T14). 10 invariants. The theorem statements and proof sketches are research candidates, not a claim of completed machine verification. the protocol generalizes to any bounded measurable domain: audio, haptic, neural (T8)
 
@@ -176,7 +176,7 @@ every organelle carries an optional semantic role:
 | navigation | changes the inspected destination | commander input, menu items, tabs, stars |
 | action | triggers a state change | buttons, toggles |
 | display | presents data (read-only) | counters, address, pill, content |
-| input | accepts user input | text input, slider, token amount |
+| input | accepts input from the neuron | text input, slider, token amount |
 | landmark | structural anchor for orientation | context, avatar, commander, adviser |
 | group | semantically related organelles | validator list, token table, filter bar |
 
@@ -301,7 +301,7 @@ Proof. the Pareto front at each width contains all non-dominated importance vect
 
 Complexity. step 1 generates $2^m$ subsets (dominated by step 3). for fixed $w_{min}$, the Pareto front of $n$ points in $\mathbb{R}^d$ is computable in $\mathcal{O}(n \log^{d-2} n)$ for $d \geq 2$ (Kung et al., 1975). the total number of Pareto-optimal conformations is $\mathcal{O}(m^{d-1})$ per width class (upper bound on Pareto front size in $\mathbb{R}^d$). for $d = 1$ (scalar importance): the front is a single point — Theorem 6 recovers. for $d = 2$: at most $\mathcal{O}(m)$ Pareto-optimal conformations per width, $\mathcal{O}(m^2)$ total. specification-time computation, not runtime
 
-Fold selection with branching. at runtime, user configuration or display context determines a weight vector $\vec{w} \in \mathbb{R}^d$ (how much to value each importance dimension). the fold function becomes:
+Fold selection with branching. at runtime, the neuron's configuration or the display context determines a weight vector $\vec{w} \in \mathbb{R}^d$ (how much to value each importance dimension). the fold function becomes:
 
 $$l^* = \arg\max_{l \in \mathcal{F},\; w_{min}(l) \leq c_w} \vec{w} \cdot \vec{\phi^*}(l)$$
 
