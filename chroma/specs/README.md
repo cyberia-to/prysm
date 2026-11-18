@@ -6,7 +6,7 @@ alias: chroma architecture, the 9, chroma painting
 ---
 # chroma — the painting side
 
-the shape of the agent's interface — the 3×3 grid, the nine slots, the cyberlink contract between them — is specified by the agent that owns it: [[cy/specs/chroma|cy/specs/chroma]] (moved there 2026-10-07; a full-screen terminal is as much a chroma as a window). this directory keeps what prysm adds: how each slot is *painted* — overlay cameras, renderer plugging, the per-slot visual contracts below.
+the shape of the agent's interface — the 3×3 grid, the nine slots, the cyberlink contract between them — belongs to the agent that owns it: [[cy/chroma]] (moved there 2026-10-07; a full-screen terminal is as much a chroma as a window). that page is canonical for the shape — where it and this one disagree, it wins. the cut has not been made here yet: everything from [layout](#layout) down is still the old shape spec, kept in place until it is reduced to a pointer. what is prysm's own, and stays here whatever happens to the rest, is the painting — how each slot is *painted*: overlay cameras, renderer plugging, the per-slot visual contracts in this directory.
 
 ## slot names
 
