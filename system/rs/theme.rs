@@ -29,7 +29,16 @@ pub const DARK_BASE:     Color = Color::srgba(0.0, 0.0, 0.0, 1.0);
 ///
 /// Tinted, never neutral: a grey line on black reads as a grey box, and the
 /// surface stops looking black at all. This is the acid green the rest of the
-/// interface speaks, dimmed until it is just structure.
+/// interface speaks, dimmed until it is just structure — spelled out because a
+/// `const` cannot read [`ACID_GREEN`]; every runtime site goes through [`acid`].
 pub const BORDER:        Color = Color::srgba(0.13, 0.92, 0.51, 0.22);
 pub const TEXT_PRIMARY:  Color = Color::srgba(0.95, 0.95, 0.96, 1.0);
 pub const TEXT_DIM:      Color = Color::srgba(0.45, 0.45, 0.50, 1.0);
+
+/// The interface's own hue at `alpha`. [`ACID_GREEN`] holds these channels, and
+/// a hairline, a saber or a row rule reads them here instead of writing them
+/// out again — a palette change then reaches every tinted surface.
+pub fn acid(alpha: f32) -> Color {
+    let c = ACID_GREEN.to_srgba();
+    Color::srgba(c.red, c.green, c.blue, alpha)
+}

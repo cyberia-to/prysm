@@ -13,12 +13,14 @@
 //! content as text — text as text, a log as a log line, a table as a note — so
 //! you can read a stream's *meaning* where `tade inspect` shows its envelope.
 //!
-//! SYNC: the routing table below mirrors `prysm/system/rs/scrollback.rs` — keep
-//! them in step. The copy is local on purpose: step 3 of the tade·nox·spark·prysm
-//! proposal ("catalog → spark: prysm reads spark; it does not hold a vocabulary
-//! of its own") moves the `(sigil, render)` catalog into spark, and no spark
-//! crate exists to read yet. When one does, this table and the scrollback
-//! dispatch both read it instead of carrying rows. Step 5 of the same proposal
+//! SYNC: the routing table below mirrors `prysm/system/rs/scrollback.rs`. The
+//! test `the_printed_table_holds_exactly_the_renderers_arms` reads that file's
+//! own dispatch arms, so an arm added there and forgotten here fails the build
+//! rather than printing `raw`. The copy is local on purpose: step 3 of the
+//! tade·nox·spark·prysm proposal ("catalog → spark: prysm reads spark; it does
+//! not hold a vocabulary of its own") moves the `(sigil, render)` catalog into
+//! spark, and no spark crate exists to read yet. When one does, this table and
+//! the scrollback dispatch both read it instead of carrying rows. Step 5 of the same proposal
 //! (tty → ANSI, pipe → tade chunks ending in STATUS) is not implemented here:
 //! piped output is plain text.
 
@@ -63,6 +65,7 @@ const LOGO: &str = "\
 /// scrollback dispatch, in its order. `molecule()` looks a frame up here and
 /// `prysm molecules` prints these rows, so the printed table cannot drift from
 /// the routing, and the labels come from tade's own names rather than by hand.
+/// The rows themselves are checked against the renderer's source in `tests`.
 const ROUTES: &[(u8, u8, &str)] = &[
     (sigil::HAX, render::TEXT, "text"),
     (sigil::SIG, render::TEXT, "annotation"),
@@ -204,45 +207,69 @@ fn main() {
 mod tests {
     use super::*;
 
-    /// Every arm of `dispatch` in prysm/system/rs/scrollback.rs, in its order,
-    /// written out independently of ROUTES: this is the copy that fails when
-    /// the renderer learns a frame and the CLI does not.
-    const DISPATCH: &[(u8, u8, &str)] = &[
-        (sigil::HAX, render::TEXT, "text"),
-        (sigil::SIG, render::TEXT, "annotation"),
-        (sigil::PAT, render::TEXT, "neuron"),
-        (sigil::DOT, render::LOG, "log"),
-        (sigil::ZAP, render::ERROR, "error"),
-        (sigil::DOT, render::STATUS, "status"),
-        (sigil::DOT, render::PROGRESS, "progress"),
-        (sigil::ZAP, render::COMPONENT, "action"),
-        (sigil::BUC, render::COMPONENT, "stat"),
-        (sigil::LUS, render::COMPONENT, "row"),
-        (sigil::BAR, render::COMPONENT, "component"),
-        (sigil::FAS, render::COMPONENT, "scope"),
-        (sigil::HAX, render::TABLE, "table"),
-        (sigil::FAS, render::STRUCT, "scope"),
-        (sigil::COL, render::STRUCT, "pair"),
-    ];
+    /// The renderer's own dispatch, read out of its source at compile time —
+    /// not a second copy to keep in step. An arm reads as the pair of names
+    /// tade gives its bytes: `(sigil::HAX, render::TEXT)` is `("hax", "text")`,
+    /// which is what `sigil::name`/`render::name` return for a route's bytes.
+    /// So an arm added to the renderer and forgotten in ROUTES fails here.
+    ///
+    /// The parse reads one `(sigil::X, render::Y)` pair per arm line, up to the
+    /// `_` fallthrough. An arm written as an or-pattern or behind a guard would
+    /// be read as its first pair only; the dispatch has had one pair per arm
+    /// since it was written, and this limit is recorded in
+    /// `audit/cli-routing.md`.
+    const SCROLLBACK: &str = include_str!("../../system/rs/scrollback.rs");
 
-    #[test]
-    fn every_scrollback_arm_has_its_molecule() {
-        for &(sig, ren, mol) in DISPATCH {
-            assert_eq!(
-                molecule(sig, ren),
-                mol,
-                "({} {}) must render as {mol}",
-                sig as char,
-                ren as char
-            );
-        }
+    fn dispatch_arms() -> Vec<(String, String)> {
+        let body = SCROLLBACK
+            .split_once("match (chunk.sigil, chunk.render) {")
+            .expect("dispatch matches on (chunk.sigil, chunk.render)")
+            .1
+            .split_once("\n        _ =>")
+            .expect("the dispatch ends in a fallthrough arm")
+            .0;
+        body.lines()
+            .filter_map(|line| {
+                let pair = line.trim().strip_prefix("(sigil::")?.split_once(')')?.0;
+                let (sig, ren) = pair.split_once(", render::")?;
+                Some((sig.trim().to_lowercase(), ren.trim().to_lowercase()))
+            })
+            .collect()
+    }
+
+    fn byte_named(name: &str, all: &[u8], namer: fn(u8) -> &'static str) -> u8 {
+        *all.iter()
+            .find(|&&b| namer(b) == name)
+            .unwrap_or_else(|| panic!("tade names no sigil or render {name}"))
     }
 
     #[test]
-    fn the_printed_table_holds_exactly_the_routing() {
-        assert_eq!(ROUTES.len(), DISPATCH.len(), "ROUTES and the dispatch differ in length");
-        for (row, arm) in ROUTES.iter().zip(DISPATCH) {
-            assert_eq!(row, arm, "the printed table drifted from the dispatch");
+    fn the_printed_table_holds_exactly_the_renderers_arms() {
+        let arms = dispatch_arms();
+        assert!(
+            !arms.is_empty(),
+            "no arm was read out of system/rs/scrollback.rs — the parse, not the routing, is broken"
+        );
+        let routes: Vec<(String, String)> = ROUTES
+            .iter()
+            .map(|&(sig, ren, _)| (sigil::name(sig).to_string(), render::name(ren).to_string()))
+            .collect();
+        assert_eq!(
+            routes, arms,
+            "ROUTES and the scrollback dispatch drifted apart, in content or in order"
+        );
+    }
+
+    #[test]
+    fn every_scrollback_arm_has_its_molecule() {
+        for (sig, ren) in dispatch_arms() {
+            let s = byte_named(&sig, &sigil::ALL, sigil::name);
+            let r = byte_named(&ren, &render::ALL, render::name);
+            assert_ne!(
+                molecule(s, r),
+                RAW,
+                "({sig} {ren}) is drawn by the renderer but prysm prints it as {RAW}"
+            );
         }
     }
 

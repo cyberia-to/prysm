@@ -9,7 +9,7 @@ Proposed UI contract under [composition](../../system/specs/composition.md). Lay
 
 action timeline molecule in [[prysm]]
 
-A scoped Log projection: view navigation, conversations, transaction attempts and cyberlinks when retained under their record profile. Cybergraph/BBG owns history; the widget owns presentation only. It can show one or several attachments while retaining each event's subject, domain, network and evidence. Newest at bottom, oldest at top; machine-time counter at the bottom.
+A scoped Log projection: view navigation, conversations, signal attempts and cyberlinks when retained under their record profile. Cybergraph/BBG owns history; the widget owns presentation only. It can show one or several attachments while retaining each event's subject, domain, network and evidence. Newest at bottom, oldest at top; machine-time counter at the bottom.
 
 ## protocol role
 
@@ -62,8 +62,8 @@ each event carries [[emotion]] from its action type:
 |-----------|---------|-------|
 | navigation (view switch) | neutral | #ffffff |
 | message received | [[emotion]] of message | varies |
-| transaction submitted | pending/unknown label until the declared outcome is known | #fcf000 |
-| transaction received | sourced receipt status; acceptance and finality shown separately | varies |
+| signal submitted | pending/unknown label until the declared outcome is known | #fcf000 |
+| signal received | sourced receipt status; acceptance and finality shown separately | varies |
 | balance decrease | red | #ff0000 |
 | [[cyberlink]] created | green | #00fe00 |
 | error | red | #ff0000 |

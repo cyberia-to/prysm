@@ -49,7 +49,7 @@ value compared to reference with three zones
 
 $$\varepsilon_{threshold}(v, \theta_{low}, \theta_{high}) = \begin{cases} \text{green} & v \geq \theta_{high} \\ \text{yellow} & \theta_{low} \leq v < \theta_{high} \\ \text{red} & v < \theta_{low} \end{cases}$$
 
-used by: subject-card borders (sourced [[karma]] thresholds), the [Sphere view proposal](../../../aos/sphere.md) validator pills, the [Reactor view proposal](../../../aos/reactor.md) E-Ratio, and labeled transaction outcomes
+used by: subject-card borders (sourced [[karma]] thresholds), the [Sphere view proposal](../../../aos/sphere.md) validator pills, the [Reactor view proposal](../../../aos/reactor.md) E-Ratio, and labeled signal outcomes
 
 generalizes to more zones:
 

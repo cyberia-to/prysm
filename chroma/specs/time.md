@@ -70,7 +70,7 @@ from previously displayed rows.
 | field | meaning |
 |-------|---------|
 | observed timestamp | source-reported or local wall-clock time, possibly absent |
-| runtime commit index | local durable transaction order |
+| runtime commit index | local durable commit order |
 | SignalChain step | order within one neuron's signal chain |
 | block height / finality evidence | declared network's ordering and confirmation profile |
 

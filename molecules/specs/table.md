@@ -52,6 +52,19 @@ $\mathcal{F}$:
 - icon columns: center-aligned
 - headers inherit alignment from data column
 
+A column is numeric when it holds at least one value and every value standing in
+it reads as a number — digits with an optional sign, group separators, a decimal
+point or a trailing percent. Alignment is read from the column's own cells, never
+from its position in the row and never from the word in its header.
+
+## column tracks
+
+One width per column, the same on every lane. A column's share of the lane
+follows the widest value standing in it, its header included, with a floor of
+half an even share so a narrow column stays readable; the shares sum to the full
+lane. The widths come from the frame the renderer was handed — it carries no
+table of any caller's column names.
+
 ## filter and sort
 
 from §6.2 of [[prysm/layout]]:
@@ -70,7 +83,9 @@ row identity; aggregation must disclose its scope and preserve the original rows
 A row may carry a target — what tapping it opens. Targets ride as trailing cells
 of the row after its data cells: one trailing cell makes the whole row a button,
 and one trailing cell per column makes each cell its own link, with `_` for a
-cell that has none. A target is recognised by its prefix: `particle:`, `cyb://`,
+cell that has none. A single trailing `_` is a row that declares no target: it
+leaves the row like any other target cell and installs nothing, so the row stays
+unclickable. A target is recognised by its prefix: `particle:`, `cyb://`,
 `model:`, `fetch:`, `vault:`, `work:`, `block:`.
 
 The renderer reads the convention from content, so a data cell equal to `_` or

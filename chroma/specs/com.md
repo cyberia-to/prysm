@@ -46,14 +46,14 @@ fuzzy matching. recent commands. context-aware suggestions from current view.
 | ask | submit a read/query or Soma task under its declared policy |
 | navigate | inspect a typed destination without attaching or executing it |
 
-actions may compose as search → select → link → publish. Each effect retains its captured authority, result and failure state; a chain of UI steps is not an atomic transaction or a blanket grant.
+actions may compose as search → select → link → publish. Each effect retains its captured authority, result and failure state; a chain of UI steps is not one signal and not a blanket grant.
 
 ## Proposed keyboard bindings
 
 - `⌘K` command palette
 - `/` focus Com/search
 - `⌘L` new [[cyberlink]]
-- `⌘S` request the signing flow for the captured pending transaction
+- `⌘S` request the signing flow for the captured pending signal
 - `⌘P` publish current [[particle]]
 - `Tab` cycle between view controls/tabs according to focus rules
 - `Esc` back / close / cancel
